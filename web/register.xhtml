@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="/templates/masterLayout.xhtml" >
+            <ui:define name="windowTitle">
+                #{message.registerTitle}
+            </ui:define>
+
+            <ui:define name="heading">
+                <ui:include src="/templates/login/header.xhtml" />
+            </ui:define>
+
+            <ui:define name="content">
+                <style>
+                    .form-singin {
+                        max-width: 750px;
+                        padding: 15px;
+                        margin: 0 auto;
+                    }
+
+                    .form-singin .form-control {
+                        position: relative;
+                        height: auto;
+                        -webkit-box-sizing: border-box;
+                        -moz-box-sizing: border-box;
+                        box-sizing: border-box;
+                        padding: 10px;
+                        font-size: 16px;
+                    }
+                </style>
+                <p:tooltip/>
+
+                <h:form class="form-singin">
+                    <fieldset>
+                        <div id="legend">
+                            <legend class="">#{message.regFrom}</legend>
+                        </div>
+                        <h:panelGrid columns="2">
+
+                            <p:inputText id="name" class="form-control" placeholder="#{message.regName}" value="#{register.name}" required="true" autocomplete="true" requiredMessage="Field Required!">
+
+                            </p:inputText>
+                            <p:message id="name_error" class="error-text alert" for="name" />
+
+
+
+                            <p:inputText id="surname" class="form-control" placeholder="#{message.regSurname}" value="#{register.surname}" required="true" autocomplete="true" requiredMessage="Field Required!" >
+                            </p:inputText>
+                            <p:message for="surname" />
+
+
+
+                            <p:inputText id="institution" class="form-control" placeholder="#{message.regInstitution}" value="#{register.institution}" required="true" autocomplete="true" requiredMessage="Field Required!">
+                            </p:inputText>
+                            <p:message for="institution" />
+
+
+
+                            <p:inputText id="username" class="form-control" placeholder="#{message.username}" value="#{register.username}" validator="#{register.UserValidator}" required="true" autocomplete="true" requiredMessage="#{message.login_usr_req}">
+                                <p:ajax event="blur" update="username_error" />
+                            </p:inputText>
+                            <p:message id="username_error" for="username" />
+
+
+
+                            <p:inputText id="email" class="form-control" placeholder="#{message.regEmail}" value="#{register.email}" required="true" autocomplete="true" requiredMessage="#{message.regEmailreq}" validatorMessage="Email not correct!">
+                                <f:validateRegex
+                                    pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                <p:ajax event="blur" update="email_error" />
+                            </p:inputText>
+                            <p:message id="email_error" for="email" />
+
+
+
+                            <p:password id="password" class="form-control" placeholder="#{message.regPass}" value="#{register.password}" match="password_confirm"  required="true" validatorMessage="Passwords don't match!" requiredMessage="Field Required!">
+                            </p:password>
+                            <p:message id="password_error" for="password" />
+
+                            <p:password id="password_confirm" class="form-control" value="#{register.password}" placeholder="#{message.regPassC}" validator="#{register.PassValidator}" required="true" requiredMessage="Field Required!">
+                            </p:password>
+                            <p:message id="passwordc_error" for="password_confirm" />
+                        </h:panelGrid>
+                        <h:commandButton style="max-width: 213px" id="register" class="btn btn-lg btn-primary btn-block" value="#{message.regreg}" action="#{register.send}" />
+
+                    </fieldset>
+                </h:form>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+
