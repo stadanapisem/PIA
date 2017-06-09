@@ -1,3 +1,4 @@
 build/
 /dist/
 web/resources
+web/WEB-INF/pics

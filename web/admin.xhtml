@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="/templates/masterLayout.xhtml" >
+            <ui:define name="windowTitle">
+                Administrator Panel
+            </ui:define>
+
+            <ui:define name="heading">
+                <ui:include src="/templates/login/header.xhtml" />
+            </ui:define>
+
+            <ui:define name="content">
+                <div class="container">
+                    <style>
+                        .form-singin {
+                            max-width: 750px;
+                            padding: 15px;
+                            margin: 0 auto;
+                        }
+
+                        .form-singin .form-control {
+                            position: relative;
+                            height: auto;
+                            -webkit-box-sizing: border-box;
+                            -moz-box-sizing: border-box;
+                            box-sizing: border-box;
+                            padding: 10px;
+                            font-size: 16px;
+                        }
+                    </style>
+
+                    <h:form class="form-singin">
+                        <p:focus for="name" />
+                        <div id="legend">
+                            <legend class="">Add new Conference</legend>
+                        </div>
+                        <h:panelGrid columns="2">
+
+                            <p:inputText id="name" class="form-control" placeholder="Name" value="#{admin.name}" required="true" autocomplete="true" requiredMessage="Field Required!">
+
+                            </p:inputText>
+                            <p:message id="name_error" class="error-text alert" for="name" />
+
+
+                            <p:password id="password" class="form-control" placeholder="#{message.regPass}" value="#{admin.password}" match="password_confirm"  required="true" validatorMessage="Passwords don't match!" requiredMessage="Field Required!">
+                            </p:password>
+                            <p:message id="password_error" for="password" />
+
+                            <p:password id="password_confirm" class="form-control" value="#{register.password}" placeholder="#{message.regPassC}" validator="#{admin.PassValidator}" required="true" requiredMessage="Field Required!">
+                            </p:password>
+                            <p:message id="passwordc_error" for="password_confirm" />
+
+                        </h:panelGrid>
+                        <h:commandButton style="max-width: 213px" id="register" class="btn btn-lg btn-primary btn-block" value="Create Conference" action="#{admin.send}" />
+
+
+                    </h:form>
+                    <hr></hr>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <th>Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Area</th>
+                            <tbody>
+                                <ui:repeat var="i" value="#{admin.conferences}" >
+                                    <tr>
+                                        <td>#{i.name}</td>
+                                        <td>#{i.dateBegin}</td>
+                                        <td>#{i.dateEnd}</td>
+                                        <td>#{i.area}</td>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

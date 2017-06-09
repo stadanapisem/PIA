@@ -6,19 +6,37 @@
 package controller;
 
 import database.User;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.Base64;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.inject.Named;
 import javax.enterprise.context.Dependent;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
+import javax.imageio.ImageIO;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
  * @author Miljan
  */
-@Named(value = "register")
-@Dependent
+@ManagedBean(name = "register")
+@SessionScoped
 public class register {
 
     private Integer uid;
@@ -49,7 +67,7 @@ public class register {
     public void PassValidator(FacesContext fc, UIComponent c, Object value) {
         String pass = (String) value;
         System.out.println(fc.getAttributes().size());
-        String pattern = "^(?!.*(.)\\1{2})([A-Za-z0-9]{1})((?=.*[\\d])(?=.*[A-Za-z])|(?=.*[^\\w\\d\\s])(?=.*[A-Za-z])).{7,11}$";
+        String pattern = "^(?!.*(.)\\1{2})([A-Za-z0-9])(?=(.*[a-z].*){3,})(?=.*\\d.*)(?=.*\\W.*)[a-zA-Z0-9\\S]{7,11}$";
 
         if (!pass.matches(pattern)) {
             password_valid = false;
@@ -61,22 +79,81 @@ public class register {
         update_validity();
     }
 
+    public void handleUpload(FileUploadEvent event) {
+        UploadedFile uploadedFile = event.getFile();
+        String fileName = uploadedFile.getFileName();
+        byte[] contents = uploadedFile.getContents();
+        try {
+            BufferedImage bufferedImg = ImageIO.read(new ByteArrayInputStream(contents));
+           // if(bufferedImg.getHeight() > 300 || bufferedImg.getWidth() > 300)
+           //     throw new ValidatorException(new FacesMessage("Image dimensions too large"));
+            
+            Path folder = Paths.get("C:\\Users\\Miljan\\Documents\\NetBeansProjects\\PIApouksaj8\\web\\WEB-INF\\pics");
+            String extention = fileName.substring(fileName.indexOf('.'));
+            Path file = Files.createTempFile(folder, fileName + "-", extention);
+            this.profilePicture = file.toString();
+            InputStream in = uploadedFile.getInputstream();
+            Files.copy(in, file, StandardCopyOption.REPLACE_EXISTING);
+            FacesContext.getCurrentInstance().addMessage(null,new FacesMessage("File Uploaded Successfully"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void PassMatchValidator(FacesContext fc, UIComponent c, Object value) {
         String pass = (String) value;
-        
-        if(!pass.equals(password)) {
+
+        if (!pass.equals(password)) {
             passwords_match = false;
             update_validity();
             throw new ValidatorException(new FacesMessage("Passwords don't match!"));
         }
-        
+
         passwords_match = true;
         update_validity();
-            
+
     }
-    
-    public String send() {
+
+    private byte[] getSaltB() {
+        try {
+            SecureRandom sr = new SecureRandom(LocalDateTime.now().toString().getBytes());
+            byte[] salt = new byte[16];
+            sr.nextBytes(salt);
+
+            return salt;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return null;
+    }
+
+    private String generateHash(String pass, byte[] salt, int iter) {
+        try {
+            PBEKeySpec spec = new PBEKeySpec(pass.toCharArray(), salt, iter, 64 * 8);
+            SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+
+            return Base64.getEncoder().encodeToString((skf.generateSecret(spec).getEncoded()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public String send() {
+        byte[] salt_bytes = getSaltB();
+        int iter = 10000;
+        String tmp_pass = generateHash(password, salt_bytes, iter);
+
+        User user = new User(username, tmp_pass, Base64.getEncoder().encodeToString(salt_bytes), iter, name, surname, email, institution, gender, profilePicture, shirtSize, linkedin, (byte) 0);
+        boolean ret = User.addUser(user);
+
+        if (ret) {
+            return "index";
+        }
+
+        return "error";
     }
 
     public register() {

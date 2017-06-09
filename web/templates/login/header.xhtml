@@ -6,20 +6,35 @@
       xmlns:p="http://primefaces.org/ui">
     <h:head>
         <title>Facelet Title</title>
-        
+
     </h:head>
     <h:body>
         <ui:composition>
-            <!--<nav class="navbar navbar-default">
+            <nav class="navbar navbar-default navbar-fixed-top">
                 <div class="container-fluid">
-                    #{message.loginTitle}
+                    <div class="navbar-header">
+                        <h:form>
+                            <h:commandLink class="navbar-brand" value="#{message.indexTitle}" rendered="#{login.loggedin == false}" action="index"  />
+                            <h:commandLink class="navbar-brand" value="#{message.indexTitle}" rendered="#{login.loggedin}" action="home"  />
+                        </h:form>
+                    </div>
+                    
+                    <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav navbar-right">
+                            <h:form>
+                                <li style="float: left; position: relative; display: block;"><h:commandLink style="padding-top: 15px; padding-bottom: 15px; padding-right: 15px; padding-left: 15px; 
+                                                   line-height: 20px; color: #777; position: relative; display: block; text-decoration: none; background-color: transparent" value="Messages" rendered="#{login.loggedin}" action="messages" /></li>
+                                <li style="float: left; position: relative; display: block;"><h:commandLink style="padding-top: 15px; padding-bottom: 15px; padding-right: 15px; padding-left: 15px; 
+                                                   line-height: 20px; color: #777; position: relative; display: block; text-decoration: none; background-color: transparent" value="Profile" rendered="#{login.loggedin}" action="options" /></li>
+                                <li style="float: left; position: relative; display: block;"><h:commandLink style="padding-top: 15px; padding-bottom: 15px; padding-right: 15px; padding-left: 15px; 
+                                                   line-height: 20px; color: #777; position: relative; display: block; text-decoration: none; background-color: transparent" value="Logout" rendered="#{login.loggedin}" action="#{login.logout}" /></li>
+                            </h:form>
+                        </ul>
+                    </div>
                 </div>
-            </nav>-->
-            <p:menubar>
-                <p:menuitem value="#{message.indexTitle}" url="/" />
-                
-            </p:menubar>
-            
+            </nav>
+
+
         </ui:composition>
     </h:body>
 </html>

@@ -39,7 +39,7 @@
                     .form-singin .form-singin-heading {
                         margin-bottom: 10px;
                     }
-                    
+
                     span.reg {
                         align-content: center;
                         padding-top: 10px;
@@ -47,24 +47,25 @@
                     }
                 </style>
                 <p:tooltip/>
-                
+
                 <div class="container">
                     <h:form class="form-singin">
                         <h2 class="form-singin-heading">#{message.loginTitle}</h2>
 
-
+                        <span class="reg" style="color: red">#{login.message}</span>
+                        <p:focus for="username" />
                         <p:inputText id="username" class="form-control" placeholder="#{message.username}" value="#{login.username}" required="true" autocomplete="true" requiredMessage="#{message.login_usr_req}" />
                         <p:tooltip id="toolTipusername" for="username" rendered="#{login.username == null ? true : false}" value="#{message.login_usr_req}" />
 
 
-                        <p:password style="margin-bottom: 10px" id="password" class="form-control" placeholder="#{message.password}" required="true"  />
+                        <p:password style="margin-bottom: 10px" id="password" class="form-control" placeholder="#{message.password}" value="#{login.password}" required="true"  />
                         <p:tooltip id="toolTippassword" for="password" rendered="#{login.password == null ? true : false}" value="#{message.login_pas_req}" />
 
 
-                        <h:commandButton class="btn btn-lg btn-primary btn-block" value="#{message.loginTitle}" action="login" />
-                       <span class="reg"><h:link outcome="register">Don't have an account? Register here!</h:link></span>
+                        <h:commandButton class="btn btn-lg btn-primary btn-block" value="#{message.loginTitle}" action="#{login.process}" />
+                        <span class="reg"><h:link outcome="register">Don't have an account? Register here!</h:link></span>
                     </h:form>
-                    
+
                 </div>
 
             </ui:define>

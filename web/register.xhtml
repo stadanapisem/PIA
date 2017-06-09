@@ -40,58 +40,90 @@
                 <p:tooltip/>
 
                 <h:form class="form-singin">
-                    <fieldset>
-                        <div id="legend">
-                            <legend class="">#{message.regFrom}</legend>
-                        </div>
+                    <p:focus for="name" />
+                    <div id="legend">
+                        <legend class="">#{message.regFrom}</legend>
+                    </div>
+                    <h:panelGrid columns="2">
+
+                        <p:inputText id="name" class="form-control" placeholder="#{message.regName}" value="#{register.name}" required="true" autocomplete="true" requiredMessage="Field Required!">
+
+                        </p:inputText>
+                        <p:message id="name_error" class="error-text alert" for="name" />
+
+
+
+                        <p:inputText id="surname" class="form-control" placeholder="#{message.regSurname}" value="#{register.surname}" required="true" autocomplete="true" requiredMessage="Field Required!" >
+                        </p:inputText>
+                        <p:message for="surname" />
+
+
+
+                        <p:inputText id="institution" class="form-control" placeholder="#{message.regInstitution}" value="#{register.institution}" required="true" autocomplete="true" requiredMessage="Field Required!">
+                        </p:inputText>
+                        <p:message for="institution" />
+
+
+
+                        <p:inputText id="username" class="form-control" placeholder="#{message.username}" value="#{register.username}" validator="#{register.UserValidator}" required="true" autocomplete="true" requiredMessage="#{message.login_usr_req}">
+                            <p:ajax event="blur" update="username_error" />
+                        </p:inputText>
+                        <p:message id="username_error" for="username" />
+
+
+
+                        <p:inputText id="email" class="form-control" placeholder="#{message.regEmail}" value="#{register.email}" required="true" autocomplete="true" requiredMessage="#{message.regEmailreq}" validatorMessage="Email not correct!">
+                            <f:validateRegex
+                                pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                            <p:ajax event="blur" update="email_error" />
+                        </p:inputText>
+                        <p:message id="email_error" for="email" />
+
+
+
+                        <p:password id="password" class="form-control" placeholder="#{message.regPass}" value="#{register.password}" match="password_confirm"  required="true" validatorMessage="Passwords don't match!" requiredMessage="Field Required!">
+                        </p:password>
+                        <p:message id="password_error" for="password" />
+
+                        <p:password id="password_confirm" class="form-control" value="#{register.password}" placeholder="#{message.regPassC}" validator="#{register.PassValidator}" required="true" requiredMessage="Field Required!">
+                        </p:password>
+                        <p:message id="passwordc_error" for="password_confirm" />
+
+
                         <h:panelGrid columns="2">
-
-                            <p:inputText id="name" class="form-control" placeholder="#{message.regName}" value="#{register.name}" required="true" autocomplete="true" requiredMessage="Field Required!">
-
-                            </p:inputText>
-                            <p:message id="name_error" class="error-text alert" for="name" />
-
-
-
-                            <p:inputText id="surname" class="form-control" placeholder="#{message.regSurname}" value="#{register.surname}" required="true" autocomplete="true" requiredMessage="Field Required!" >
-                            </p:inputText>
-                            <p:message for="surname" />
-
-
-
-                            <p:inputText id="institution" class="form-control" placeholder="#{message.regInstitution}" value="#{register.institution}" required="true" autocomplete="true" requiredMessage="Field Required!">
-                            </p:inputText>
-                            <p:message for="institution" />
-
-
-
-                            <p:inputText id="username" class="form-control" placeholder="#{message.username}" value="#{register.username}" validator="#{register.UserValidator}" required="true" autocomplete="true" requiredMessage="#{message.login_usr_req}">
-                                <p:ajax event="blur" update="username_error" />
-                            </p:inputText>
-                            <p:message id="username_error" for="username" />
-
-
-
-                            <p:inputText id="email" class="form-control" placeholder="#{message.regEmail}" value="#{register.email}" required="true" autocomplete="true" requiredMessage="#{message.regEmailreq}" validatorMessage="Email not correct!">
-                                <f:validateRegex
-                                    pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
-                                <p:ajax event="blur" update="email_error" />
-                            </p:inputText>
-                            <p:message id="email_error" for="email" />
-
-
-
-                            <p:password id="password" class="form-control" placeholder="#{message.regPass}" value="#{register.password}" match="password_confirm"  required="true" validatorMessage="Passwords don't match!" requiredMessage="Field Required!">
-                            </p:password>
-                            <p:message id="password_error" for="password" />
-
-                            <p:password id="password_confirm" class="form-control" value="#{register.password}" placeholder="#{message.regPassC}" validator="#{register.PassValidator}" required="true" requiredMessage="Field Required!">
-                            </p:password>
-                            <p:message id="passwordc_error" for="password_confirm" />
+                            <p:selectOneRadio id="gender" class="form-control" value="#{register.gender}">
+                                <f:selectItem itemLabel="Male" itemValue="1" />
+                                <f:selectItem itemLabel="Female" itemValue="0" />
+                            </p:selectOneRadio>
                         </h:panelGrid>
-                        <h:commandButton style="max-width: 213px" id="register" class="btn btn-lg btn-primary btn-block" value="#{message.regreg}" action="#{register.send}" />
+                        <p:message id="gender_error" for="gender" />
 
-                    </fieldset>
+                        <h:panelGrid columns="2">
+                            <p:selectOneRadio id="shirt" class="form-control" value="#{register.shirtSize}">
+                                <f:selectItem itemLabel="S" itemValue="S" />
+                                <f:selectItem itemLabel="M" itemValue="M" />
+                                <f:selectItem itemLabel="L" itemValue="L" />
+                                <f:selectItem itemLabel="XL" itemValue="XL" />
+                                <f:selectItem itemValue="XXL" itemLabel="XXL" />
+                            </p:selectOneRadio>
+                        </h:panelGrid>
+                        <p:message id="shirt_error" for="shirt" />
+
+                        <p:inputText id="linkedin" class="form-control" style="margin-bottom: 10px" placeholder="Linkedin" value="#{register.linkedin}" validatorMessage="This is not a valid linkedin profile link!" >
+                            <f:validateRegex pattern="^((http|https):\/\/)?+(www.linkedin.com\/)+[a-z]+(\/)+[a-zA-Z0-9-]{5,30}+$" />
+                        </p:inputText>
+                        <p:message id="linkedin_error" for="linkedin" />
+
+                        <h:panelGroup id="idiot">
+                            <p:fileUpload id="upload" fileUploadListener="#{register.handleUpload}" label="Upload profile picture" update="idiot" mode="advanced" auto="true" fileLimit="1" 
+                                          dragDropSupport="false" sizeLimit="1000000" allowTypes="/(\.|\/)(jpe?g|png)$/" rendered="#{register.profilePicture == null}" />
+                            <p:outputLabel value="File uploaded successfully" rendered="#{register.profilePicture != null}" />
+                        </h:panelGroup>
+
+                    </h:panelGrid>
+                    <h:commandButton style="max-width: 213px" id="register" class="btn btn-lg btn-primary btn-block" value="#{message.regreg}" action="#{register.send}" />
+
+
                 </h:form>
 
             </ui:define>

@@ -28,6 +28,32 @@ import util.NewHibernateUtil;
             , @UniqueConstraint(columnNames = "username")}
 )
 public class User implements java.io.Serializable {
+    
+    public static User findByUsername(String username) {
+        User ret = null;
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("FROM User E WHERE E.username = :username");
+            query.setParameter("username", username);
+            List results = query.list();
+            
+            if(results.size() > 0)
+                ret = (User) results.get(0);
+            
+            tx.commit();
+        } catch(Exception e) {
+            if(tx != null)
+                tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        
+        return ret;
+    }
 
     public static boolean checkExistance(String username) {
         boolean ret = false;
@@ -44,6 +70,27 @@ public class User implements java.io.Serializable {
             session.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        
+        return ret;
+    }
+    
+    public static boolean addUser(User u) {
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        boolean ret = false;
+        
+        try {
+            tx = session.beginTransaction();
+            session.save(u);
+            tx.commit();
+            ret = true;
+        } catch (Exception e) {
+            if(tx != null)
+                tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
         }
         
         return ret;
@@ -76,7 +123,7 @@ public class User implements java.io.Serializable {
     public User() {
     }
 
-    public User(String username, String password, String salt, int iterations, String name, String surname, String email, String institution, byte type) {
+    public User(String username, String password, String salt, int iterations, String name, String surname, String email, String institution, Byte gender, String profilePicture, String shirtSize, String linkedin, byte type) {
         this.username = username;
         this.password = password;
         this.salt = salt;
@@ -85,6 +132,10 @@ public class User implements java.io.Serializable {
         this.surname = surname;
         this.email = email;
         this.institution = institution;
+        this.profilePicture = profilePicture;
+        this.gender = gender;
+        this.linkedin = linkedin;
+        this.shirtSize = shirtSize;
         this.type = type;
     }
 
@@ -143,7 +194,7 @@ public class User implements java.io.Serializable {
         this.password = password;
     }
 
-    @Column(name = "salt", nullable = false, length = 16)
+    @Column(name = "salt", nullable = false, length = 30)
     public String getSalt() {
         return this.salt;
     }
