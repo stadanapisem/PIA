@@ -30,7 +30,7 @@ public class Message  implements java.io.Serializable {
      private User userByUid1;
      private String text;
      private Date time;
-
+     
     public Message() {
     }
 

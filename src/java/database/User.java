@@ -29,6 +29,27 @@ import util.NewHibernateUtil;
 )
 public class User implements java.io.Serializable {
     
+    public static List<User> getAllUsers() {
+        List<User> ret = null;
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("FROM User");
+            ret = query.list();
+            tx.commit();
+        } catch(Exception e) {
+            if(tx != null)
+                tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        
+        return ret;
+    }
+    
     public static User findByUsername(String username) {
         User ret = null;
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();

@@ -37,7 +37,7 @@
                             font-size: 16px;
                         }
                     </style>
-
+                    <p:tooltip/>
                     <h:form class="form-singin">
                         <p:focus for="name" />
                         <div id="legend">
@@ -50,6 +50,27 @@
                             </p:inputText>
                             <p:message id="name_error" class="error-text alert" for="name" />
 
+                            <p:calendar id="start" value="#{admin.start}" class="form-control" placeholder="Start Date" required="true" requiredMessage="Field Required!" />
+                            <p:message id="start_error" class="error-text alert" for="start" />
+
+                            <p:calendar id="end" value="#{admin.end}" class="form-control" placeholder="End Date" required="true" requiredMessage="Field Required!" />
+                            <p:message id="end_error" class="error-text alert" for="end" />
+
+                            <h:selectOneListbox id="area" class="form-control" value="#{admin.area}" required="true" requiredMessage="Field Required!" >
+                                <f:selectItems value="#{admin.areas}" var="i" itemLabel="#{i}" itemValue="#{i}" />
+                            </h:selectOneListbox>
+                            <p:message id="area_error" for="area" class="error-text alert" />
+
+
+                            <h:selectOneListbox id="location" class="form-control" value="#{admin.location_id}" required="true" requiredMessage="Field Required!" >
+                                <f:selectItems value="#{admin.locations}" var="i" itemLabel="#{i.name}" itemValue="#{i.lid}" />
+                            </h:selectOneListbox>
+                            <p:message id="location_error" for="location" class="error-text alert" />
+
+                            <h:selectManyMenu id="moderators" value="#{admin.mods}" class="form-control" required="true" requiredMessage="Field Required!" >
+                                <f:selectItems value="#{admin.users}" var="i" itemLabel="#{i.name.concat(' ').concat(i.surname)}" itemValue="#{i.uid}" />
+                            </h:selectManyMenu>
+                            <p:message id="mod_error" for="moderators" class="error-text alert" />
 
                             <p:password id="password" class="form-control" placeholder="#{message.regPass}" value="#{admin.password}" match="password_confirm"  required="true" validatorMessage="Passwords don't match!" requiredMessage="Field Required!">
                             </p:password>
@@ -62,28 +83,36 @@
                         </h:panelGrid>
                         <h:commandButton style="max-width: 213px" id="register" class="btn btn-lg btn-primary btn-block" value="Create Conference" action="#{admin.send}" />
 
-
+                        <p:tooltip id="toolTipmod" for="moderators" value="Select moderator(s)" />
+                        <p:tooltip id="toolTiploc" for="location" value="Select location" />
+                        <p:tooltip id="toolTiparea" for="area" value="Select area" />
                     </h:form>
                     <hr></hr>
 
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <th>Name</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Area</th>
-                            <tbody>
-                                <ui:repeat var="i" value="#{admin.conferences}" >
-                                    <tr>
-                                        <td>#{i.name}</td>
-                                        <td>#{i.dateBegin}</td>
-                                        <td>#{i.dateEnd}</td>
-                                        <td>#{i.area}</td>
-                                    </tr>
-                                </ui:repeat>
-                            </tbody>
-                        </table>
-                    </div>
+                    <h:form>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <th>Name</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Area</th>
+                                <th>Cancel</th>
+                                <tbody>
+                                    <ui:repeat var="i" value="#{admin.conferences}" >
+                                        <tr>
+                                            <td>#{i.name}</td>
+                                            <td>#{i.dateBegin}</td>
+                                            <td>#{i.dateEnd}</td>
+                                            <td>#{i.area}</td>
+                                            <td><p:commandLink id="cancel" style="color: red" update="@this" ajax="false" value="Cancel!" action="#{admin.cancelConf}">
+                                                    <f:param name="cancel_id" value="#{i.cid}" />
+                                                </p:commandLink></td>
+                                        </tr>
+                                    </ui:repeat>
+                                </tbody>
+                            </table>
+                        </div>
+                    </h:form>
                 </div>
             </ui:define>
         </ui:composition>
