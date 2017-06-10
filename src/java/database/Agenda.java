@@ -21,8 +21,8 @@ import util.NewHibernateUtil;
  */
 @Entity
 @Table(name = "agenda",
-         catalog = "projekat",
-         uniqueConstraints = @UniqueConstraint(columnNames = {"uid", "eid"})
+        catalog = "projekat",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"uid", "eid"})
 )
 public class Agenda implements java.io.Serializable {
 
@@ -50,6 +50,29 @@ public class Agenda implements java.io.Serializable {
         }
 
         return u;
+    }
+
+    public static List<Integer> allConferencesForUser(User u) {
+        List<Integer> conf = null;
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+
+        try {
+            tx = session.beginTransaction();
+            //Query query = session.createQuery("FROM Conference C, Agenda A, Event E, Programme P WHERE A.uid = :uid AND A.eid = E.eid AND P.eid = E.eid AND P.cid = C.cid GROUP By C.cid");
+            Query query = session.createSQLQuery("SELECT DISTINCT(C.cid) FROM Conference C, Agenda A, Event E, Programme P WHERE A.edi = E.edi AND E.edi = P.edi AND P.cid = C.cid ");
+            //query.setParameter("uid", u.getUid());
+            conf = query.list();
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+
+        return conf;
     }
 
     public Agenda() {

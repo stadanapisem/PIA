@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Facelet Title</title>
     </h:head>
@@ -19,7 +20,76 @@
 
             <ui:define name="content">
                 <div class="container">
-                    
+                    <h3>My Agenda</h3>
+                    <h:form>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <th>Name</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Area</th>
+                                <tbody>
+                                    <ui:repeat var="i" value="#{home.allConfs}" >
+                                        <tr>
+                                            <td>#{i.name}</td>
+                                            <td>#{i.dateBegin}</td>
+                                            <td>#{i.dateEnd}</td>
+                                            <td>#{i.area}</td>
+                                        </tr>
+                                    </ui:repeat>
+                                </tbody>
+                            </table>
+                        </div>
+                    </h:form>
+
+
+                    <hr></hr>
+                    <div class="content" >
+                        <h3>Search</h3>
+                        <div class="form-horizontal">
+                            <h:form>
+                                <h:panelGrid columns="2">
+                                    <p:autoComplete id="name" value="#{home.name}" placeholder="Name" completeMethod="#{home.completeName}" minQueryLength="3" />
+                                    <div></div>
+                                    <p:autoComplete id="place" value="#{home.place}" placeholder="Place" completeMethod="#{home.completePlace}" minQueryLength="3" />
+                                    <p:autoComplete id="area" value="#{home.area}" placeholder="Area" completeMethod="#{home.completeArea}" minQueryLength="3" />
+                                    <p:calendar id="start" value="#{home.start}" placeholder="Start Date" />
+                                    <p:calendar id="end" value="#{home.end}" placeholder="End Date" />
+                                    <p:commandButton update="dalidalidada" process="@all" actionListener="#{home.search}" value="Search" />
+                                </h:panelGrid>
+                            </h:form>
+                            <h:panelGroup id="dalidalidada">
+                                <h:form>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped">
+                                            <th>Name</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Area</th>
+                                            <th>Location</th>
+                                            <th>Participation</th>
+                                            <tbody>
+                                                <ui:repeat var="i" value="#{home.filteredConfs}" >
+                                                    <tr>
+                                                        <td>#{i.name}</td>
+                                                        <td>#{i.dateBegin}</td>
+                                                        <td>#{i.dateEnd}</td>
+                                                        <td>#{i.area}</td>
+                                                        <td>#{i.location.name}</td>
+                                                        <td><p:commandLink id="signup" style="color: blue" update="@this" ajax="false" value="Sign Up!" action="#{home.signUp}">
+                                                                <f:param name="cancel_id" value="#{i.cid}" />
+                                                            </p:commandLink>
+                                                        </td>
+                                                    </tr>
+                                                </ui:repeat>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </h:form>
+                            </h:panelGroup>
+
+                        </div>
+                    </div>
                 </div>
             </ui:define>
         </ui:composition>

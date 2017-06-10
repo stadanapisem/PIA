@@ -15,9 +15,14 @@
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/index.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/templates/footer.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/controller/login.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Agenda.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Conference.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/helpers/UserHelper.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/home.xhtml</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Location.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Event.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Message.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Moderator.java</file>
         </group>
     </open-files>
 </project-private>
