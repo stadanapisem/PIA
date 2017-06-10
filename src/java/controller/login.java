@@ -120,5 +120,13 @@ public class login {
     public void setLoggedin(boolean loggedin) {
         this.loggedin = loggedin;
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
     
 }

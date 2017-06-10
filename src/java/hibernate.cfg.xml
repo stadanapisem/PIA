@@ -48,6 +48,7 @@ Contributor(s):
     <property name="hibernate.show_sql">true</property>
     <property name="hibernate.current_session_context_class">thread</property>
     <property name="hibernate.query.factory_class">org.hibernate.hql.internal.classic.ClassicQueryTranslatorFactory</property>
+    <property name="hibernate.enable_lazy_load_no_trans">true</property>
     <mapping class="database.Programme"/>
     <mapping class="database.Hall"/>
     <mapping class="database.Message"/>
@@ -67,5 +68,6 @@ Contributor(s):
     <mapping class="database.Event"/>
     <mapping class="database.Favourites"/>
     <mapping class="database.User"/>
+    <mapping class="database.UserConference"/>
   </session-factory>
 </hibernate-configuration>

@@ -42,6 +42,32 @@ public class Conference implements java.io.Serializable {
     private Set<Programme> programmes = new HashSet<Programme>(0);
     private Set<Moderator> moderators = new HashSet<Moderator>(0);
 
+    public static Conference getConferenceById(Integer id) {
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        Conference ret = null;
+
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("FROM Conference C WHERE C.cid = :cid");
+            query.setParameter("cid", id);
+
+            List<Conference> result = query.list();
+            if (result != null && result.size() > 0) {
+                ret = (result.get(0));
+            }
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
+
     public static boolean deleteConference(Conference c) {
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;

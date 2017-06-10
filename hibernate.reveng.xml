@@ -41,24 +41,24 @@ Contributor(s):
 -->
 <hibernate-reverse-engineering>
   <schema-selection match-catalog="projekat"/>
-  <table-filter match-name="workshop"/>
-  <table-filter match-name="comment"/>
+  <table-filter match-name="lecture"/>
+  <table-filter match-name="programme"/>
   <table-filter match-name="hall"/>
   <table-filter match-name="event"/>
-  <table-filter match-name="ceremony"/>
-  <table-filter match-name="lecture_ceremony"/>
-  <table-filter match-name="location"/>
-  <table-filter match-name="message"/>
   <table-filter match-name="grade"/>
-  <table-filter match-name="moderator"/>
-  <table-filter match-name="conference"/>
   <table-filter match-name="user_conference"/>
-  <table-filter match-name="user"/>
-  <table-filter match-name="programme"/>
-  <table-filter match-name="favourites"/>
-  <table-filter match-name="photo"/>
-  <table-filter match-name="lecture"/>
-  <table-filter match-name="session"/>
   <table-filter match-name="agenda"/>
+  <table-filter match-name="lecture_ceremony"/>
+  <table-filter match-name="photo"/>
+  <table-filter match-name="comment"/>
+  <table-filter match-name="message"/>
+  <table-filter match-name="session"/>
+  <table-filter match-name="user"/>
+  <table-filter match-name="conference"/>
+  <table-filter match-name="favourites"/>
+  <table-filter match-name="workshop"/>
+  <table-filter match-name="moderator"/>
+  <table-filter match-name="ceremony"/>
   <table-filter match-name="like_event"/>
+  <table-filter match-name="location"/>
 </hibernate-reverse-engineering>

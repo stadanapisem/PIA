@@ -1,55 +1,118 @@
 package controller;
 
 import database.Conference;
+import database.UserConference;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
 
 /**
  *
  * @author Miljan
  */
 @ManagedBean(name = "home")
-@RequestScoped
-public class home {
+@ViewScoped
+public class home implements Serializable {
 
     private List<Conference> allConfs;
     private List<Conference> filteredConfs = new ArrayList<Conference>();
-    private String name, area, place;
+    private String name, area, place, password;
     private Date start, end;
+    private List<Conference> myConferences = new ArrayList<>();
+    private Integer cid;
 
     @ManagedProperty(value = "#{login}")
     private login login;
 
     public String signUp() {
+        //Integer cid = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("signup_id"));
+        //Integer cid = Integer.parseInt(this.cid);
+        //Integer cid = Integer.parseInt(((HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest()).getParameter("singup_id"));
+        Conference tmp = null;
+
+        for (Conference c : allConfs) {
+            if (c.getCid() == cid) {
+                tmp = c;
+                break;
+            }
+        }
+
+        if(!checkHash(password, tmp.getPassword(), tmp.getSalt(), tmp.getIterations()))
+            throw new ValidatorException(new FacesMessage("Wrong password!"));
         
+        UserConference uc = new UserConference(tmp, login.getUser());
+        if (!UserConference.addUserConference(uc)) {
+            return "error";
+        }
+
+        return FacesContext.getCurrentInstance().getViewRoot().getViewId() + "?faces-redirect=true";
     }
-    
+
+    public void test() {
+        cid = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("singup_id"));
+        System.out.println(cid);
+    }
+
     public void search() {
         filteredConfs.clear();
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.DATE, 3);
         Date now = cal.getTime();
-        
 
         for (Conference c : allConfs) {
             if ((name != null && c.getName().toLowerCase().contains(name.toLowerCase()))
                     || (place != null && c.getLocation().getName().toLowerCase().contains(place.toLowerCase()))
                     || (area != null && c.getArea().toLowerCase().contains(area.toLowerCase())) && (c.getDateBegin().after(now))) {
                 filteredConfs.add(c);
-            } else if(start != null && end != null && ((c.getDateBegin().before(start) && c.getDateEnd().after(start)) || (c.getDateBegin().before(end))) ) {
+            } else if (start != null && end != null && ((c.getDateBegin().before(start) && c.getDateEnd().after(start)) || (c.getDateBegin().before(end)))) {
                 filteredConfs.add(c);
-            } else if(start != null && end == null && (c.getDateBegin().after(start))) {
+            } else if (start != null && end == null && (c.getDateBegin().after(start))) {
                 filteredConfs.add(c);
-            } else if(start == null && end != null && (c.getDateEnd().before(end))) {
+            } else if (start == null && end != null && (c.getDateEnd().before(end))) {
                 filteredConfs.add(c);
             }
         }
+    }
+    
+    private static boolean checkHash(String pass, String p64, String salt, int iter) {
+        try {
+            byte[] salt_byte = Base64.getDecoder().decode(salt);
+            PBEKeySpec spec = new PBEKeySpec(pass.toCharArray(), salt_byte, iter, 64 * 8);
+            SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            byte[] hash = skf.generateSecret(spec).getEncoded();
+
+            byte[] check = Base64.getDecoder().decode(p64);
+
+            boolean diff = hash.length == check.length;
+            if (diff) {
+                for (int i = 0; i < hash.length; i++) {
+                    if(hash[i] != check[i])
+                        diff = false;
+                }
+            }
+            
+            return diff;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     private boolean contains(List<String> tmp, String x) {
@@ -105,7 +168,22 @@ public class home {
     }
 
     public home() {
+        
+    }
+
+    @PostConstruct
+    public void load() {
         allConfs = Conference.getAllConferences();
+        if (login != null) {
+            List<Integer> tmp = UserConference.getUserConferences(login.getUser());
+            for (Integer id : tmp) {
+                Conference asd = Conference.getConferenceById(id);
+                myConferences.add(asd);
+                for(int i = 0; i < allConfs.size(); i++)
+                    if(allConfs.get(i).getCid() == asd.getCid())
+                        allConfs.remove(i);
+            }
+        }
     }
 
     public login getLogin() {
@@ -170,6 +248,22 @@ public class home {
 
     public void setEnd(Date end) {
         this.end = end;
+    }
+
+    public List<Conference> getMyConferences() {
+        return myConferences;
+    }
+
+    public void setMyConferences(List<Conference> myConferences) {
+        this.myConferences = myConferences;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }

@@ -20,20 +20,20 @@
 
             <ui:define name="content">
                 <div class="container">
-                    <h3>My Agenda</h3>
+                    <h3>My Conferences</h3>
                     <h:form>
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped">
                                 <th>Name</th>
-                                <th>Start Date</th>
+                                <th>Location</th>
                                 <th>End Date</th>
                                 <th>Area</th>
                                 <tbody>
-                                    <ui:repeat var="i" value="#{home.allConfs}" >
+                                    <ui:repeat var="i" value="#{home.myConferences}" >
                                         <tr>
                                             <td>#{i.name}</td>
-                                            <td>#{i.dateBegin}</td>
-                                            <td>#{i.dateEnd}</td>
+                                            <td>#{i.location.address}</td>
+                                            <td>#{i.cid}</td>
                                             <td>#{i.area}</td>
                                         </tr>
                                     </ui:repeat>
@@ -59,38 +59,47 @@
                                 </h:panelGrid>
                             </h:form>
                             <h:panelGroup id="dalidalidada">
-                                <h:form>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-striped">
-                                            <th>Name</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Area</th>
-                                            <th>Location</th>
-                                            <th>Participation</th>
-                                            <tbody>
-                                                <ui:repeat var="i" value="#{home.filteredConfs}" >
-                                                    <tr>
-                                                        <td>#{i.name}</td>
-                                                        <td>#{i.dateBegin}</td>
-                                                        <td>#{i.dateEnd}</td>
-                                                        <td>#{i.area}</td>
-                                                        <td>#{i.location.name}</td>
-                                                        <td><p:commandLink id="signup" style="color: blue" update="@this" ajax="false" value="Sign Up!" action="#{home.signUp}">
-                                                                <f:param name="cancel_id" value="#{i.cid}" />
-                                                            </p:commandLink>
-                                                        </td>
-                                                    </tr>
-                                                </ui:repeat>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </h:form>
+
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                        <th>Name</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Area</th>
+                                        <th>Location</th>
+                                        <th>Participation</th>
+                                        <tbody>
+                                            <ui:repeat var="i" value="#{home.filteredConfs}" >
+                                                <tr>
+                                                    <td>#{i.name}</td>
+                                                    <td>#{i.dateBegin}</td>
+                                                    <td>#{i.dateEnd}</td>
+                                                    <td>#{i.area}</td>
+                                                    <td>#{i.location.name}</td>
+                                                    <td><h:form><p:commandButton id="singup_button" style="color: blue" value="Sign Up!" action="#{home.test}" oncomplete="PF('dlg').show();" >
+                                                                <input type="hidden" name="singup_id" id="singup_id" value="#{i.cid}" />
+                                                            </p:commandButton></h:form>
+                                                    </td>
+                                                </tr>
+                                            </ui:repeat>
+                                        </tbody>
+                                    </table>
+                                </div>
+
                             </h:panelGroup>
 
                         </div>
+
                     </div>
                 </div>
+                <p:dialog header="Input password" widgetVar="dlg">
+                    <h:form id="dialog_form">
+                        <p:password id="password" class="form-control" placeholder="#{singup}" value="#{home.password}" required="true" requiredMessage="Field Required!">
+                        </p:password>
+                        <p:message id="password_error" for="password" />
+                        <p:commandButton value="Sign Up!" action="#{home.signUp}" oncomplete="PF('dlg').hide();" />
+                    </h:form>
+                </p:dialog>
             </ui:define>
         </ui:composition>
     </h:body>
