@@ -19,9 +19,19 @@
             </ui:define>
 
             <ui:define name="content">
+                <p:dialog header="Messages" widgetVar="messages">
+                    <h:form>
+                        <p:accordionPanel value="#{home.myConferences}" var="i">
+                            <p:tab title="#{i.name}">
+                                #{i.password}
+                            </p:tab>
+                        </p:accordionPanel>
+                    </h:form>
+                </p:dialog>
+                
                 <div class="container">
                     <h3>My Conferences</h3>
-                    <h:form>
+                    <!--<h:form>
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped">
                                 <th>Name</th>
@@ -40,8 +50,13 @@
                                 </tbody>
                             </table>
                         </div>
-                    </h:form>
-
+                    </h:form>-->
+                    
+                    <p:accordionPanel value="#{home.myConferences}" var="i">
+                        <p:tab title="#{i.name}">
+                            
+                        </p:tab>
+                    </p:accordionPanel>
 
                     <hr></hr>
                     <div class="content" >

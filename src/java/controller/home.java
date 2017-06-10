@@ -1,6 +1,7 @@
 package controller;
 
 import database.Conference;
+import database.Message;
 import database.UserConference;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -35,14 +36,12 @@ public class home implements Serializable {
     private Date start, end;
     private List<Conference> myConferences = new ArrayList<>();
     private Integer cid;
+    private List<Message> myMessages;
 
     @ManagedProperty(value = "#{login}")
     private login login;
 
     public String signUp() {
-        //Integer cid = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("signup_id"));
-        //Integer cid = Integer.parseInt(this.cid);
-        //Integer cid = Integer.parseInt(((HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest()).getParameter("singup_id"));
         Conference tmp = null;
 
         for (Conference c : allConfs) {
@@ -173,6 +172,7 @@ public class home implements Serializable {
 
     @PostConstruct
     public void load() {
+        myMessages = Message.getAllMessagesForUser(login.getUser());
         allConfs = Conference.getAllConferences();
         if (login != null) {
             List<Integer> tmp = UserConference.getUserConferences(login.getUser());
@@ -264,6 +264,14 @@ public class home implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Message> getMyMessages() {
+        return myMessages;
+    }
+
+    public void setMyMessages(List<Message> myMessages) {
+        this.myMessages = myMessages;
     }
 
 }

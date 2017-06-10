@@ -18,16 +18,16 @@
                             <h:commandLink class="navbar-brand" value="#{message.indexTitle}" rendered="#{login.loggedin}" action="home"  />
                         </h:form>
                     </div>
-                    
+
                     <div >
                         <ul class="nav navbar-nav navbar-right">
                             <h:form>
+                                <li style="float: left; position: relative; display: block;"><p:commandLink style="padding-top: 15px; padding-bottom: 15px; padding-right: 15px; padding-left: 15px; 
+                                                                                                            line-height: 20px; color: #777; position: relative; display: block; text-decoration: none; background-color: transparent" value="Messages" rendered="#{login.loggedin}"  onclick="PF('messages').show();" /></li>
                                 <li style="float: left; position: relative; display: block;"><h:commandLink style="padding-top: 15px; padding-bottom: 15px; padding-right: 15px; padding-left: 15px; 
-                                                   line-height: 20px; color: #777; position: relative; display: block; text-decoration: none; background-color: transparent" value="Messages" rendered="#{login.loggedin}" action="messages" /></li>
+                                                                                                            line-height: 20px; color: #777; position: relative; display: block; text-decoration: none; background-color: transparent" value="Profile" rendered="#{login.loggedin}" action="options" /></li>
                                 <li style="float: left; position: relative; display: block;"><h:commandLink style="padding-top: 15px; padding-bottom: 15px; padding-right: 15px; padding-left: 15px; 
-                                                   line-height: 20px; color: #777; position: relative; display: block; text-decoration: none; background-color: transparent" value="Profile" rendered="#{login.loggedin}" action="options" /></li>
-                                <li style="float: left; position: relative; display: block;"><h:commandLink style="padding-top: 15px; padding-bottom: 15px; padding-right: 15px; padding-left: 15px; 
-                                                   line-height: 20px; color: #777; position: relative; display: block; text-decoration: none; background-color: transparent" value="Logout" rendered="#{login.loggedin}" action="#{login.logout}" /></li>
+                                                                                                            line-height: 20px; color: #777; position: relative; display: block; text-decoration: none; background-color: transparent" value="Logout" rendered="#{login.loggedin}" action="#{login.logout}" /></li>
                             </h:form>
                         </ul>
                     </div>
