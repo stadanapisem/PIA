@@ -34,17 +34,44 @@ public class Message implements java.io.Serializable {
     private String text;
     private Date time;
 
-    public static List<Message> getAllMessagesForUser(User u) {
+    public static List<Integer> getAllMessagesForUser(User u) {
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
-        List<Message> ret = new ArrayList<>();
+        List<Integer> ret = new ArrayList<>();
 
         try {
             tx = session.beginTransaction();
-            Query query = session.createSQLQuery("SELECT * FROM Message WHERE uid1 = :uid OR udi2 = :uid ORDER BY time DESC");
+            Query query = session.createSQLQuery("SELECT mid FROM Message WHERE uid1 = :uid OR udi2 = :uid ORDER BY time DESC");
             query.setParameter("uid", u.getUid());
             
             ret = query.list();
+            
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
+    
+    public static Message getMessageById(Integer mid) {
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        Message ret = null;
+
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("FROM Message M WHERE M.mid = :mid");
+            query.setParameter("mid", mid);
+            
+            List<Message> res = query.list();
+            if(res != null && res.size() > 0)
+                ret = res.get(0);
             
             tx.commit();
         } catch (Exception e) {

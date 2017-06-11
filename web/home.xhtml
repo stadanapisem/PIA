@@ -19,42 +19,79 @@
             </ui:define>
 
             <ui:define name="content">
+                <p:tooltip />
                 <p:dialog header="Messages" widgetVar="messages">
                     <h:form>
-                        <p:accordionPanel value="#{home.myConferences}" var="i">
-                            <p:tab title="#{i.name}">
-                                #{i.password}
+                        <p:accordionPanel>
+                            <p:tab title="Inbox">
+                                <p:accordionPanel value="#{home.myInbox}" var="i">
+                                    <p:tab title="#{i.userByUdi2.name.concat(' ').concat(i.userByUdi2.surname)}">
+                                        <div class="small">#{i.time}</div>
+                                        #{i.text}
+                                    </p:tab>
+                                </p:accordionPanel>
+                            </p:tab>
+                            <p:tab title="Outbox">
+                                <p:accordionPanel value="#{home.myOutbox}" var="i">
+                                    <p:tab title="#{i.userByUid1.name.concat(' ').concat(i.userByUid1.surname)}">
+                                        <div class="small">#{i.time}</div>
+                                        #{i.text}
+                                    </p:tab>
+                                </p:accordionPanel>
                             </p:tab>
                         </p:accordionPanel>
                     </h:form>
                 </p:dialog>
-                
+
+                <p:dialog header="Moderator" widgetVar="mod">
+                    <div class="container">
+                        <h:form>
+                            <p class="small">Add new event:</p>
+                            <p:selectOneRadio style="padding-bottom: 5px" id="event_type" value="#{home.add_event}">
+                                <f:selectItem itemLabel="Ceremony" itemValue="1" />
+                                <f:selectItem itemLabel="Session" itemValue="2" />
+                                <f:selectItem itemLabel="Workshop" itemValue="3" />
+                                <p:ajax update="add_form:update_form" />
+                            </p:selectOneRadio>
+                        </h:form>
+                        <h:form id="add_form">
+                           
+                            <p:selectOneMenu id="day_to_add" value="#{home.day_to_add}">
+                                <f:selectItem itemLabel="Choose day" itemValue="#{home.conf_dur}" />
+                                <ui:repeat var="j" value="#{home.day_to_add}" size="#{home.conf_dur}" step="1" >
+                                    <f:selectItem itemLabel="#{j}" itemValue="#{j}" />
+                                </ui:repeat>
+                            </p:selectOneMenu>
+                            <h:panelGroup id="update_form">
+                                <h:panelGroup rendered="#{home.add_event.equals('1')}">
+                                    <!-- Ceremony -->
+                                    <p:inputNumber id="cer_duration" maxValue="60" value="#{home.cer_duration}" placeholder="Ceremony Duration [min.]" />
+                                    <p:tooltip id="toolTipcer_duration" for="cer_duration" value="Max. duration is 60 min." />
+                                    <p:commandButton action="#{home.newCeremony}" value="Add" />
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{home.add_event.equals('2')}">
+                                    
+                                </h:panelGroup>
+                            </h:panelGroup>
+                        </h:form>
+                    </div>
+                </p:dialog>
+
                 <div class="container">
+
                     <h3>My Conferences</h3>
-                    <!--<h:form>
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
-                                <th>Name</th>
-                                <th>Location</th>
-                                <th>End Date</th>
-                                <th>Area</th>
-                                <tbody>
-                                    <ui:repeat var="i" value="#{home.myConferences}" >
-                                        <tr>
-                                            <td>#{i.name}</td>
-                                            <td>#{i.location.address}</td>
-                                            <td>#{i.cid}</td>
-                                            <td>#{i.area}</td>
-                                        </tr>
-                                    </ui:repeat>
-                                </tbody>
-                            </table>
-                        </div>
-                    </h:form>-->
-                    
                     <p:accordionPanel value="#{home.myConferences}" var="i">
                         <p:tab title="#{i.name}">
-                            
+                            <h:form>
+                                <ui:repeat var="j" value="#{i.programmes.toArray()}">
+                                    #{j.event.workshop}
+                                    #{j.event.ceremony}
+                                    #{j.event.session}
+                                    <p:commandButton value="Moderator panel" action="#{home.test}" oncomplete="PF('mod').show();" rendered="#{home.isModerator.contains(i.cid)}">
+                                        <input type="hidden" name="singup_id" id="singup_id" value="#{i.cid}" />
+                                    </p:commandButton>
+                                </ui:repeat>
+                            </h:form>
                         </p:tab>
                     </p:accordionPanel>
 

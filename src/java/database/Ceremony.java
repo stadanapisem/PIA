@@ -33,7 +33,6 @@ public class Ceremony  implements java.io.Serializable {
 
     public Ceremony() {
     }
-
 	
     public Ceremony(Event event, int duration) {
         this.event = event;

@@ -1,6 +1,7 @@
 package database;
 // Generated Jun 7, 2017 5:07:06 PM by Hibernate Tools 4.3.1
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import org.hibernate.Query;
 import org.hibernate.Transaction;
 import util.NewHibernateUtil;
 
@@ -19,14 +21,39 @@ import util.NewHibernateUtil;
  */
 @Entity
 @Table(name = "moderator",
-         catalog = "projekat",
-         uniqueConstraints = @UniqueConstraint(columnNames = {"mid", "cid", "uid"})
+        catalog = "projekat",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"mid", "cid", "uid"})
 )
 public class Moderator implements java.io.Serializable {
 
     private Integer mid;
     private Conference conference;
     private User user;
+
+    public static List<Integer> getModeratedForUser(User u) {
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        List<Integer> ret = null;
+
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createSQLQuery("SELECT M.cid FROM Moderator M WHERE M.uid = :uid");
+            query.setParameter("uid", u);
+            
+            ret = query.list();
+            
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
 
     public static boolean addModerator(Moderator m) {
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();

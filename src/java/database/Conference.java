@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -133,6 +134,11 @@ public class Conference implements java.io.Serializable {
         return ret;
     }
 
+    public static int getNumberOfDays(Conference c) {
+        long diff = c.dateEnd.getTime() - c.dateBegin.getTime();
+        return (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+    }
+    
     public Conference() {
     }
 

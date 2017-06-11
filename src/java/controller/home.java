@@ -2,6 +2,7 @@ package controller;
 
 import database.Conference;
 import database.Message;
+import database.Moderator;
 import database.UserConference;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,11 +37,18 @@ public class home implements Serializable {
     private Date start, end;
     private List<Conference> myConferences = new ArrayList<>();
     private Integer cid;
-    private List<Message> myMessages;
+    private List<Message> myInbox = new ArrayList<>(), myOutbox = new ArrayList<>();
+    private List<Integer> isModerator;
+    private String add_event;
+    private Integer cer_duration, day_to_add, conf_dur;
 
     @ManagedProperty(value = "#{login}")
     private login login;
 
+    public void newCeremony() {
+        
+    }
+    
     public String signUp() {
         Conference tmp = null;
 
@@ -51,9 +59,10 @@ public class home implements Serializable {
             }
         }
 
-        if(!checkHash(password, tmp.getPassword(), tmp.getSalt(), tmp.getIterations()))
+        if (!checkHash(password, tmp.getPassword(), tmp.getSalt(), tmp.getIterations())) {
             throw new ValidatorException(new FacesMessage("Wrong password!"));
-        
+        }
+
         UserConference uc = new UserConference(tmp, login.getUser());
         if (!UserConference.addUserConference(uc)) {
             return "error";
@@ -64,7 +73,10 @@ public class home implements Serializable {
 
     public void test() {
         cid = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("singup_id"));
-        System.out.println(cid);
+        for(Conference tmp: myConferences)
+            if(cid == tmp.getCid())
+                conf_dur = Conference.getNumberOfDays(tmp);
+        //System.out.println(cid);
     }
 
     public void search() {
@@ -88,7 +100,7 @@ public class home implements Serializable {
             }
         }
     }
-    
+
     private static boolean checkHash(String pass, String p64, String salt, int iter) {
         try {
             byte[] salt_byte = Base64.getDecoder().decode(salt);
@@ -101,11 +113,12 @@ public class home implements Serializable {
             boolean diff = hash.length == check.length;
             if (diff) {
                 for (int i = 0; i < hash.length; i++) {
-                    if(hash[i] != check[i])
+                    if (hash[i] != check[i]) {
                         diff = false;
+                    }
                 }
             }
-            
+
             return diff;
         } catch (Exception e) {
             e.printStackTrace();
@@ -167,23 +180,36 @@ public class home implements Serializable {
     }
 
     public home() {
-        
+
     }
 
     @PostConstruct
     public void load() {
-        myMessages = Message.getAllMessagesForUser(login.getUser());
+        List<Integer> tmp1 = Message.getAllMessagesForUser(login.getUser());
+        for (int i = 0; i < tmp1.size(); i++) {
+            Message tmpmess = Message.getMessageById(tmp1.get(i));
+            if (tmpmess.getUserByUid1().getUid() == login.getUser().getUid()) {
+                myInbox.add(Message.getMessageById(tmp1.get(i)));
+            } else {
+                myOutbox.add(Message.getMessageById(tmp1.get(i)));
+            }
+        }
+
         allConfs = Conference.getAllConferences();
         if (login != null) {
             List<Integer> tmp = UserConference.getUserConferences(login.getUser());
             for (Integer id : tmp) {
                 Conference asd = Conference.getConferenceById(id);
                 myConferences.add(asd);
-                for(int i = 0; i < allConfs.size(); i++)
-                    if(allConfs.get(i).getCid() == asd.getCid())
+                for (int i = 0; i < allConfs.size(); i++) {
+                    if (allConfs.get(i).getCid() == asd.getCid()) {
                         allConfs.remove(i);
+                    }
+                }
             }
         }
+        
+        isModerator = Moderator.getModeratedForUser(login.getUser());
     }
 
     public login getLogin() {
@@ -266,12 +292,68 @@ public class home implements Serializable {
         this.password = password;
     }
 
-    public List<Message> getMyMessages() {
-        return myMessages;
+    public List<Message> getMyInbox() {
+        return myInbox;
     }
 
-    public void setMyMessages(List<Message> myMessages) {
-        this.myMessages = myMessages;
+    public void setMyInbox(List<Message> myInbox) {
+        this.myInbox = myInbox;
     }
 
+    public List<Message> getMyOutbox() {
+        return myOutbox;
+    }
+
+    public void setMyOutbox(List<Message> myOutbox) {
+        this.myOutbox = myOutbox;
+    }
+
+    public List<Integer> getIsModerator() {
+        return isModerator;
+    }
+
+    public void setIsModerator(List<Integer> isModerator) {
+        this.isModerator = isModerator;
+    }
+
+    public String getAdd_event() {
+        return add_event;
+    }
+
+    public void setAdd_event(String add_event) {
+        this.add_event = add_event;
+    }
+
+    public Integer getCer_duration() {
+        return cer_duration;
+    }
+
+    public void setCer_duration(Integer cer_duration) {
+        this.cer_duration = cer_duration;
+    }
+
+    public Integer getCid() {
+        return cid;
+    }
+
+    public void setCid(Integer cid) {
+        this.cid = cid;
+    }
+
+    public Integer getDay_to_add() {
+        return day_to_add;
+    }
+
+    public void setDay_to_add(Integer day_to_add) {
+        this.day_to_add = day_to_add;
+    }
+
+    public String getConf_dur() {
+        return conf_dur.toString();
+    }
+
+    public void setConf_dur(Integer conf_dur) {
+        this.conf_dur = conf_dur;
+    }
+    
 }
