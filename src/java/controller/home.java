@@ -40,14 +40,9 @@ public class home implements Serializable {
     private List<Message> myInbox = new ArrayList<>(), myOutbox = new ArrayList<>();
     private List<Integer> isModerator;
     private String add_event;
-    private Integer cer_duration, day_to_add, conf_dur;
 
     @ManagedProperty(value = "#{login}")
     private login login;
-
-    public void newCeremony() {
-        
-    }
     
     public String signUp() {
         Conference tmp = null;
@@ -73,10 +68,13 @@ public class home implements Serializable {
 
     public void test() {
         cid = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("singup_id"));
-        for(Conference tmp: myConferences)
-            if(cid == tmp.getCid())
-                conf_dur = Conference.getNumberOfDays(tmp);
         //System.out.println(cid);
+    }
+    
+    public String goToMod() {
+         Integer cid = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("cid_tomod"));
+         
+         return "moderator?cid=" + cid.toString();
     }
 
     public void search() {
@@ -324,36 +322,12 @@ public class home implements Serializable {
         this.add_event = add_event;
     }
 
-    public Integer getCer_duration() {
-        return cer_duration;
-    }
-
-    public void setCer_duration(Integer cer_duration) {
-        this.cer_duration = cer_duration;
-    }
-
     public Integer getCid() {
         return cid;
     }
 
     public void setCid(Integer cid) {
         this.cid = cid;
-    }
-
-    public Integer getDay_to_add() {
-        return day_to_add;
-    }
-
-    public void setDay_to_add(Integer day_to_add) {
-        this.day_to_add = day_to_add;
-    }
-
-    public String getConf_dur() {
-        return conf_dur.toString();
-    }
-
-    public void setConf_dur(Integer conf_dur) {
-        this.conf_dur = conf_dur;
     }
     
 }

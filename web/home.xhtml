@@ -43,39 +43,7 @@
                     </h:form>
                 </p:dialog>
 
-                <p:dialog header="Moderator" widgetVar="mod">
-                    <div class="container">
-                        <h:form>
-                            <p class="small">Add new event:</p>
-                            <p:selectOneRadio style="padding-bottom: 5px" id="event_type" value="#{home.add_event}">
-                                <f:selectItem itemLabel="Ceremony" itemValue="1" />
-                                <f:selectItem itemLabel="Session" itemValue="2" />
-                                <f:selectItem itemLabel="Workshop" itemValue="3" />
-                                <p:ajax update="add_form:update_form" />
-                            </p:selectOneRadio>
-                        </h:form>
-                        <h:form id="add_form">
-                           
-                            <p:selectOneMenu id="day_to_add" value="#{home.day_to_add}">
-                                <f:selectItem itemLabel="Choose day" itemValue="#{home.conf_dur}" />
-                                <ui:repeat var="j" value="#{home.day_to_add}" size="#{home.conf_dur}" step="1" >
-                                    <f:selectItem itemLabel="#{j}" itemValue="#{j}" />
-                                </ui:repeat>
-                            </p:selectOneMenu>
-                            <h:panelGroup id="update_form">
-                                <h:panelGroup rendered="#{home.add_event.equals('1')}">
-                                    <!-- Ceremony -->
-                                    <p:inputNumber id="cer_duration" maxValue="60" value="#{home.cer_duration}" placeholder="Ceremony Duration [min.]" />
-                                    <p:tooltip id="toolTipcer_duration" for="cer_duration" value="Max. duration is 60 min." />
-                                    <p:commandButton action="#{home.newCeremony}" value="Add" />
-                                </h:panelGroup>
-                                <h:panelGroup rendered="#{home.add_event.equals('2')}">
-                                    
-                                </h:panelGroup>
-                            </h:panelGroup>
-                        </h:form>
-                    </div>
-                </p:dialog>
+                
 
                 <div class="container">
 
@@ -87,9 +55,10 @@
                                     #{j.event.workshop}
                                     #{j.event.ceremony}
                                     #{j.event.session}
-                                    <p:commandButton value="Moderator panel" action="#{home.test}" oncomplete="PF('mod').show();" rendered="#{home.isModerator.contains(i.cid)}">
-                                        <input type="hidden" name="singup_id" id="singup_id" value="#{i.cid}" />
-                                    </p:commandButton>
+                                    
+                                    <p:commandLink ajax="false" action="moderator.xhtml" value="Moderate!">
+                                        <f:param name="nesto" value="#{i.cid}" />
+                                    </p:commandLink>
                                 </ui:repeat>
                             </h:form>
                         </p:tab>

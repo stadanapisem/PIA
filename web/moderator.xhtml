@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="templates/masterLayout.xhtml">
+            <ui:define name="windowTitle" >
+                Moderator Panel
+            </ui:define>
+
+            <ui:define name="heading">
+                <ui:include src="/templates/login/header.xhtml" />
+            </ui:define>
+
+            <ui:define name="content">
+
+                <div class="container">
+                    <h:form>
+                        <p class="small">Add new event:</p>
+                        <p:selectOneRadio style="padding-bottom: 5px" id="event_type" value="#{moderator.add_event}">
+                            <f:selectItem itemLabel="Ceremony" itemValue="1" />
+                            <f:selectItem itemLabel="Session" itemValue="2" />
+                            <f:selectItem itemLabel="Workshop" itemValue="3" />
+                            <p:ajax update="add_form:update_form" />
+                        </p:selectOneRadio>
+                    </h:form>
+                    <h:form id="add_form">
+
+                        <p:selectOneMenu id="day_to_add" value="#{moderator.day_to_add}">
+                            <f:selectItem itemLabel="Choose day" itemValue="" />
+                            <ui:repeat var="j" value="" size="#{moderator.conf_dur}" step="1" >
+                                <f:selectItem itemLabel="#{j}" itemValue="#{j}" />
+                            </ui:repeat>
+                        </p:selectOneMenu>
+                        <h:panelGroup id="update_form">
+                            <h:panelGroup rendered="#{moderator.add_event.equals('1')}">
+                                <!-- Ceremony -->
+                                <p:inputNumber id="cer_duration" maxValue="60" value="#{moderator.cer_duration}" placeholder="Ceremony Duration [min.]" />
+                                <p:tooltip id="toolTipcer_duration" for="cer_duration" value="Max. duration is 60 min." />
+                                <p:commandButton action="#{moderator.newCeremony}" value="Add" />
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{moderator.add_event.equals('2')}">
+
+                            </h:panelGroup>
+                        </h:panelGroup>
+                    </h:form>
+                </div>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+
