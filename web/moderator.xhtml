@@ -16,9 +16,14 @@
 
             <ui:define name="heading">
                 <ui:include src="/templates/login/header.xhtml" />
-            </ui:define>
 
+            </ui:define>
+            <f:metadata>
+                <f:viewParam name="nesto" value="#{moderator.cid}" />
+                <f:event type="preRenderView" listener="#{moderator.load}" />
+            </f:metadata>
             <ui:define name="content">
+
 
                 <div class="container">
                     <h3>#{moderator.c.name} Agenda:</h3>
@@ -43,17 +48,20 @@
                 </div>
                 <hr></hr>
                 <div class="container" style="padding-bottom: 10px">
+                    <p:messages id="error_messages" showDetail="true" autoUpdate="true" closable="true" />
                     <h:form>
                         <h3>Add new event:</h3>
                         <p:selectOneRadio style="padding-bottom: 5px" id="event_type" value="#{moderator.add_event}">
                             <f:selectItem itemLabel="Ceremony" itemValue="1" />
                             <f:selectItem itemLabel="Session" itemValue="2" />
                             <f:selectItem itemLabel="Workshop" itemValue="3" />
+                            <f:selectItem itemLabel="Lecture" itemValue="4" />
                             <p:ajax update="add_form:update_form" />
                         </p:selectOneRadio>
                     </h:form>
                 </div>
                 <div class="container">
+
                     <h:form id="add_form">
 
                         <p:inputNumber id="day_to_add" maxValue="#{moderator.conf_dur}" value="#{moderator.day_to_add}" placeholder="Day" />
@@ -85,12 +93,42 @@
                                 <!-- Workshop -->
                                 <br/>
                                 <p:inputText id="workshop_title" placeholder="Workshop title" value="#{moderator.session_title}" required="true" requiredMessage="Required field!" />
-                                <p:tooltip id="tollTipWtitle" for="session_title" value="Required field!" />
-                                <p:inputText id="author1" value="#{moderator.author1}" placeholder="Author" required="true" requiredMessage="Required field!" /><br/>
-                                <p:inputText id="author2" value="#{moderator.author2}" placeholder="Author" />
-                                <p:inputText id="author3" value="#{moderator.author3}" placeholder="Author" /><br/>
+                                <p:tooltip id="tollTipWtitle" for="workshop_title" value="Required field!" />
+                                <p:inputNumber id="ws_duration" maxValue="180" value="#{moderator.cer_duration}" placeholder="Workshop Duration [min.]" /><br/>
+                                <p:tooltip id="toolTipws_duration" for="ws_duration" value="Max. duration is 180 min." />
+                                <p:inputText id="author1" value="#{moderator.author1}" placeholder="Author" required="true" requiredMessage="Required field!" />
+                                <p:inputText id="author2" value="#{moderator.author2}" placeholder="Author" /><br/>
+                                <p:inputText id="author3" value="#{moderator.author3}" placeholder="Author" />
                                 <p:inputText id="author4" value="#{moderator.author4}" placeholder="Author" />
                                 <p:commandButton value="Add Workshop" class="btn-default" action="#{moderator.newWorkshop}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{moderator.add_event.equals('4')}">
+                                <!-- Lecture -->
+                                <br/>
+                                <p:inputText id="lecture_title" placeholder="Lecture Title" value="#{moderator.session_title}" required="true" requiredMessage="Required field!" />
+                                <p:tooltip id="tollTipLtitle" for="lecture_title" value="Required field!" />
+                                <p:inputNumber id="lec_duration" maxValue="30" value="#{moderator.cer_duration}" placeholder="Lecture Duration [min.]" /><br/>
+                                <p:tooltip id="toolTiplec_duration" for="lec_duration" value="Max. duration is 30 min." />
+                                <p:inputText id="authorl1" value="#{moderator.author1}" placeholder="Author" required="true" requiredMessage="Required field!" />
+                                <p:inputText id="authorl2" value="#{moderator.author2}" placeholder="Author" /><br/>
+                                <p:inputText id="authorl3" value="#{moderator.author3}" placeholder="Author" />
+                                <p:inputText id="authorl4" value="#{moderator.author4}" placeholder="Author" /><br/>
+
+                                <h:panelGroup>
+                                    <h5>Affiliate with Session:</h5>
+                                    <p:selectOneListbox id="session_list" value="#{moderator.affiliation_session}" >
+                                        <!--<f:selectItem itemLabel="Session:" itemValue="" />-->
+                                        <f:selectItems value="#{moderator.sessionList}" var="i" itemLabel="#{i.title}" itemValue="#{i.eid}" />
+                                    </p:selectOneListbox>
+                                    <h5>Or/And affiliate with Ceremony:</h5>
+                                    <p:selectOneListbox id="ceremony_list" value="#{moderator.affiliation_cer}" >
+                                        <!--<f:selectItem itemLabel="Ceremony:" itemValue="" />-->
+                                        <f:selectItems value="#{moderator.ceremonyList}" var="i" itemLabel="#{i.event.startTime}" itemValue="#{i.eid}" />
+                                    </p:selectOneListbox><br/>
+                                </h:panelGroup>
+
+                                <p:commandButton value="Add Lecture" class="btn-default" action="#{moderator.newLecture}" />
                             </h:panelGroup>
                         </h:panelGroup>
                     </h:form>

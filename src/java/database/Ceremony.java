@@ -2,6 +2,7 @@ package database;
 // Generated Jun 7, 2017 5:07:06 PM by Hibernate Tools 4.3.1
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import org.hibernate.Query;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -41,6 +43,56 @@ public class Ceremony implements java.io.Serializable {
             session.save(c);
             tx.commit();
             ret = true;
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
+    
+    public static List<Integer> getCeremonyForConference(Conference c) {
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        List<Integer> ret = null;
+
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createSQLQuery("SELECT DISTINCT(s.eid) FROM Ceremony s, Conference c, Programme p WHERE s.eid = p.eid AND p.cid = :cid");
+            query.setParameter("cid", c.getCid());
+            ret = query.list();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
+    
+    public static Ceremony getCeremonyById(Integer id) {
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        Ceremony ret = null;
+
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("FROM Ceremony S WHERE S.eid = :eid");
+            query.setParameter("eid", id);
+            List<Ceremony> result = query.list();
+
+            if(result != null && result.size() > 0)
+                ret = result.get(0);
+                
+            tx.commit();
         } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();

@@ -43,7 +43,7 @@
                     </h:form>
                 </p:dialog>
 
-                
+
 
                 <div class="container">
 
@@ -55,11 +55,12 @@
                                     #{j.event.workshop}
                                     #{j.event.ceremony}
                                     #{j.event.session}
-                                    
-                                    <p:commandLink ajax="false" action="moderator.xhtml" value="Moderate!">
-                                        <f:param name="nesto" value="#{i.cid}" />
-                                    </p:commandLink>
                                 </ui:repeat>
+                            </h:form>
+                            <h:form>
+                                <h:button class="btn-sm btn-default" outcome="moderator" value="Moderate!">
+                                    <f:param name="nesto" value="#{i.cid}" />
+                                </h:button>
                             </h:form>
                         </p:tab>
                     </p:accordionPanel>

@@ -11,17 +11,17 @@
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/register.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/admin.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/index.xhtml</file>
-            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/UserConference.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Agenda.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/moderator.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/controller/home.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Conference.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Lecture.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Session.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/home.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/controller/moderator.java</file>
-            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Location.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Workshop.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Event.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Message.java</file>
-            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Moderator.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Ceremony.java</file>
         </group>
     </open-files>

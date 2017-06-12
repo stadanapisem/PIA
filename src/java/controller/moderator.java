@@ -4,6 +4,8 @@ import database.Ceremony;
 import database.Conference;
 import database.Event;
 import database.Hall;
+import database.Lecture;
+import database.LectureCeremony;
 import database.Programme;
 import database.Session;
 import database.Workshop;
@@ -15,20 +17,17 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
 
 /**
  *
  * @author Miljan
  */
 @ManagedBean(name = "moderator")
-@SessionScoped
+@ViewScoped
 public class moderator implements Serializable {
 
     private String add_event, day_to_add, start_time;
@@ -37,10 +36,47 @@ public class moderator implements Serializable {
     private Integer cer_duration, conf_dur;
     private List<Event> currentAgenda = new ArrayList<>();
     private Set<Hall> halls;
+    private List<Session> sessionList = new ArrayList<>();
+    private List<Ceremony> ceremonyList = new ArrayList<>();
 
-    private String session_title, session_hall;
-    
+    private String session_title, session_hall, affiliation_session, affiliation_cer;
+
     private String author1, author2, author3, author4;
+
+    private void resetVariables() {
+        author1 = author2 = author3 = author4 = null;
+        session_hall = session_title = null;
+        cer_duration = 0;
+        start_time = day_to_add = null;
+        affiliation_session = affiliation_cer = null;
+    }
+
+    public String newLecture() {
+
+        if (affiliation_session == null || affiliation_session.isEmpty()) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error!", "You must affiliate lecture with a session!"));
+            return null;
+        }
+
+        Lecture lecture = new Lecture(Session.getSessionsById(Integer.parseInt(affiliation_session)), session_title, cer_duration, author1, author2, author3, author4);
+
+        if (!Lecture.addLecture(lecture)) {
+            return "error";
+        }
+
+        if (affiliation_cer != null && !affiliation_cer.isEmpty()) {
+            Ceremony cer = Ceremony.getCeremonyById(Integer.parseInt(affiliation_cer));
+            LectureCeremony lc = new LectureCeremony(cer, lecture);
+
+            if (!LectureCeremony.addLectureCeremony(lc)) {
+                return "error";
+            }
+        }
+
+        updateFields();
+        resetVariables();
+        return "moderator?faces-redirect=true";
+    }
 
     public String newWorkshop() {
         Calendar cal = Calendar.getInstance();
@@ -55,11 +91,24 @@ public class moderator implements Serializable {
         if (!Event.addEvent(event)) {
             return "error";
         }
-        
-        Workshop ws = new Workshop(event, session_title, author1, author2, author3, author4);
+
+        Workshop ws = new Workshop(event, session_title, author1, author2, author3, author4, cer_duration);
+
+        if (!Workshop.addWorkshop(ws)) {
+            return "error";
+        }
+
+        Programme prog = new Programme(c, event);
+        if (!Programme.addProgramme(prog)) {
+            return "error";
+        }
+
+        updateFields();
+        resetVariables();
+        return "moderator?faces-redirect=true";
     }
-    
-    public String newSession() {
+
+    public String newSession() { // TODO Session overlaping
         Calendar cal = Calendar.getInstance();
         cal.setTime(c.getDateBegin());
         cal.add(Calendar.DATE, Integer.parseInt(day_to_add));
@@ -82,16 +131,18 @@ public class moderator implements Serializable {
         }
 
         Session session = new Session(event, hall, session_title);
-        
-        if(!Session.addSession(session))
+
+        if (!Session.addSession(session)) {
             return "error";
-        
+        }
+
         Programme prog = new Programme(c, event);
         if (!Programme.addProgramme(prog)) {
             return "error";
         }
 
         updateFields();
+        resetVariables();
         return "moderator?faces-redirect=true";
     }
 
@@ -121,6 +172,7 @@ public class moderator implements Serializable {
         }
 
         updateFields();
+        resetVariables();
         return "moderator?faces-redirect=true";
     }
 
@@ -140,13 +192,32 @@ public class moderator implements Serializable {
         });
 
         halls = c.getLocation().getHalls();
+
+        sessionList.clear();
+        List<Integer> tmp_sess = Session.getSessionsForConference(c);
+        for (int i = 0; i < tmp_sess.size(); i++) {
+            sessionList.add(Session.getSessionsById(tmp_sess.get(i)));
+        }
+
+        ceremonyList.clear();
+        tmp_sess = Ceremony.getCeremonyForConference(c);
+        for (int i = 0; i < tmp_sess.size(); i++) {
+            ceremonyList.add(Ceremony.getCeremonyById(tmp_sess.get(i)));
+        }
     }
 
     public moderator() {
-        cid = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("nesto");
-        updateFields();
+        //cid = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("nesto");
+        if(cid != null)
+            updateFields();
     }
 
+    
+    public void load() {
+        if(cid != null)
+            updateFields();
+    }
+    
     public void getParameter() {
 
     }
@@ -278,6 +349,38 @@ public class moderator implements Serializable {
 
     public void setAuthor4(String author4) {
         this.author4 = author4;
+    }
+
+    public List<Session> getSessionList() {
+        return sessionList;
+    }
+
+    public void setSessionList(List<Session> sessionList) {
+        this.sessionList = sessionList;
+    }
+
+    public List<Ceremony> getCeremonyList() {
+        return ceremonyList;
+    }
+
+    public void setCeremonyList(List<Ceremony> ceremonyList) {
+        this.ceremonyList = ceremonyList;
+    }
+
+    public String getAffiliation_session() {
+        return affiliation_session;
+    }
+
+    public void setAffiliation_session(String affiliation_session) {
+        this.affiliation_session = affiliation_session;
+    }
+
+    public String getAffiliation_cer() {
+        return affiliation_cer;
+    }
+
+    public void setAffiliation_cer(String affiliation_cer) {
+        this.affiliation_cer = affiliation_cer;
     }
 
 }
