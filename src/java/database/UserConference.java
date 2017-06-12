@@ -54,7 +54,7 @@ public class UserConference implements java.io.Serializable {
 
         return ret;
     }
-    
+
     public static List<Integer> getUserConferences(User u) {
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
@@ -67,7 +67,31 @@ public class UserConference implements java.io.Serializable {
             Query query = session.createSQLQuery("SELECT DISTINCT(C.cid) FROM conference C, user_conference uc WHERE C.cid = uc.cid AND UC.uid = :uid");
             query.setParameter("uid", u.getUid());
             ret = query.list();
-            
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
+    
+    public static List<Integer> getUsersConference(Conference c) {
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        List<Integer> ret = new ArrayList<>();
+
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createSQLQuery("SELECT DISTINCT(U.uid) FROM User U, user_conference uc WHERE U.uid = uc.uid AND uc.cid = :cid");
+            query.setParameter("cid", c.getCid());
+            ret = query.list();
+
             tx.commit();
         } catch (Exception e) {
             if (tx != null) {

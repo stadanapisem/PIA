@@ -51,14 +51,19 @@
                     <p:accordionPanel value="#{home.myConferences}" var="i">
                         <p:tab title="#{i.name}">
                             <h:form>
-                                <ui:repeat var="j" value="#{i.programmes.toArray()}">
-                                    #{j.event.workshop}
-                                    #{j.event.ceremony}
-                                    #{j.event.session}
-                                </ui:repeat>
+                                    <!-- agenda -->
+                                    <h:commandLink value="Conference Agenda" action="agenda">
+                                        <f:param name="id" value="#{i.cid}" />
+                                    </h:commandLink><br/>
+                                    <h:commandLink value="My Agenda" action="agenda"></h:commandLink><br/>
+                                    gallery<br/>
+                                    <h:commandLink value="Participants" action="participants">
+                                        <f:param name="id" value="#{i.cid}" />
+                                    </h:commandLink>
+                              
                             </h:form>
                             <h:form>
-                                <h:button class="btn-sm btn-default" outcome="moderator" value="Moderate!">
+                                <h:button class="btn-sm btn-default" outcome="moderator" value="Moderate!" rendered="#{home.isModerator.contains(i.cid)}">
                                     <f:param name="nesto" value="#{i.cid}" />
                                 </h:button>
                             </h:form>

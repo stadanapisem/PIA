@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="/templates/masterLayout.xhtml">
+            <ui:define name="windowTitle">
+                #{show.c.name} Agenda
+            </ui:define>
+
+            <ui:define name="heading">
+                <ui:include src="templates/login/header.xhtml" />
+            </ui:define>
+
+            <ui:define name="content">
+                <div class="container" >
+                    <h3>#{show.c.name} Agenda:</h3>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <th>Type</th>
+                            <th>Start Time</th>
+                            <th>Day</th>
+                            <th>Hall</th>
+                            <tbody>
+                                <ui:repeat var="i" value="#{show.events}" >
+                                    <tr>
+                                        <h:panelGroup rendered="#{i.ceremony.eid == i.eid}"><td>Ceremony</td></h:panelGroup>
+                                        <h:panelGroup rendered="#{i.session.eid == i.eid}"><td>Session</td></h:panelGroup>
+                                        <h:panelGroup rendered="#{i.workshop.eid == i.eid}"><td>Workshop</td></h:panelGroup>
+                                        <td>#{i.startTime}</td>
+                                        <td>#{i.day}</td>
+                                        <td>#{i.session.hall.name}</td>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

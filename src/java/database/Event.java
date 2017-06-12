@@ -25,7 +25,7 @@ import util.NewHibernateUtil;
  */
 @Entity
 @Table(name = "event",
-         catalog = "projekat"
+        catalog = "projekat"
 )
 public class Event implements java.io.Serializable {
 
@@ -41,14 +41,14 @@ public class Event implements java.io.Serializable {
     private Workshop workshop;
     private Set<Programme> programmes = new HashSet<Programme>(0);
 
-    public static List<Event> getAllEventsForConference(Conference c) {
-        List<Event> ev = null;
+    public static List<Integer> getAllEventsForConference(Conference c) {
+        List<Integer> ev = null;
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
 
         try {
             tx = session.beginTransaction();
-            Query query = session.createQuery("FROM Event E, Programme P WHERE E.eid = P.eid AND P.cid = :cid");
+            Query query = session.createSQLQuery("SELECT E.eid FROM Event E, Programme P WHERE E.eid = P.eid AND P.cid = :cid");
             query.setParameter("cid", c.getCid());
             ev = query.list();
 
@@ -62,7 +62,31 @@ public class Event implements java.io.Serializable {
 
         return ev;
     }
-    
+
+    public static Event getEventById(Integer eid) {
+        Event ev = null;
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("FROM Event E WHERE E.eid = :eid");
+            query.setParameter("eid", eid);
+            List<Event> res = query.list();
+            if (res != null && res.size() > 0) {
+                ev = res.get(0);
+            }
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+
+        return ev;
+    }
+
     public static boolean addEvent(Event c) {
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
