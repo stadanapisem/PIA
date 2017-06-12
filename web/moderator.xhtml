@@ -21,8 +21,30 @@
             <ui:define name="content">
 
                 <div class="container">
+                    <h3>#{moderator.c.name} Agenda:</h3>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <th>Name</th>
+                            <th>Start Time</th>
+                            <th>Type</th>
+                            <tbody>
+                                <ui:repeat var="i" value="#{moderator.currentAgenda}" >
+                                    <tr>
+                                        <td>#{i.day}</td>  
+                                        <td>#{i.startTime}</td>
+                                        <h:panelGroup rendered="#{i.ceremony.eid == i.eid}"><td>Ceremony</td></h:panelGroup>
+                                        <h:panelGroup rendered="#{i.session.eid == i.eid}"><td>Session</td></h:panelGroup>
+                                        <h:panelGroup rendered="#{i.workshop.eid == i.eid}"><td>Workshop</td></h:panelGroup>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <hr></hr>
+                <div class="container" style="padding-bottom: 10px">
                     <h:form>
-                        <p class="small">Add new event:</p>
+                        <h3>Add new event:</h3>
                         <p:selectOneRadio style="padding-bottom: 5px" id="event_type" value="#{moderator.add_event}">
                             <f:selectItem itemLabel="Ceremony" itemValue="1" />
                             <f:selectItem itemLabel="Session" itemValue="2" />
@@ -30,28 +52,49 @@
                             <p:ajax update="add_form:update_form" />
                         </p:selectOneRadio>
                     </h:form>
+                </div>
+                <div class="container">
                     <h:form id="add_form">
 
-                        <p:selectOneMenu id="day_to_add" value="#{moderator.day_to_add}">
-                            <f:selectItem itemLabel="Choose day" itemValue="" />
-                            <ui:repeat var="j" value="" size="#{moderator.conf_dur}" step="1" >
-                                <f:selectItem itemLabel="#{j}" itemValue="#{j}" />
-                            </ui:repeat>
-                        </p:selectOneMenu>
+                        <p:inputNumber id="day_to_add" maxValue="#{moderator.conf_dur}" value="#{moderator.day_to_add}" placeholder="Day" />
+                        <p:tooltip id="toolTipDay" for="day_to_add" value="Cannot be grater than #{moderator.conf_dur}" />
+                        <p:inputMask id="start_time" placeholder="Start Time" value="#{moderator.start_time}" mask="99:99" />
                         <h:panelGroup id="update_form">
+
                             <h:panelGroup rendered="#{moderator.add_event.equals('1')}">
                                 <!-- Ceremony -->
+                                <br/>
                                 <p:inputNumber id="cer_duration" maxValue="60" value="#{moderator.cer_duration}" placeholder="Ceremony Duration [min.]" />
                                 <p:tooltip id="toolTipcer_duration" for="cer_duration" value="Max. duration is 60 min." />
-                                <p:commandButton action="#{moderator.newCeremony}" value="Add" />
+                                <p:commandButton action="#{moderator.newCeremony}" class="btn-default" value="Add Ceremony" />
                             </h:panelGroup>
-                            <h:panelGroup rendered="#{moderator.add_event.equals('2')}">
 
+                            <h:panelGroup rendered="#{moderator.add_event.equals('2')}" style="padding-top: 10px">
+                                <!-- Session -->
+                                <br/>
+                                <p:inputText id="session_title" placeholder="Session title" value="#{moderator.session_title}" required="true" requiredMessage="Required field!" />
+                                <p:tooltip id="tollTipStitle" for="session_title" value="Required field!" />
+                                <p:selectOneMenu style="vertical-align: middle" id="session_hall" value="#{moderator.session_hall}" >
+                                    <f:selectItem itemLabel="Select Hall" />
+                                    <f:selectItems value="#{moderator.halls}" var="hall" itemLabel="#{hall.name}" itemValue="#{hall.hid}" />
+                                </p:selectOneMenu>
+                                <p:commandButton value="Add Session" class="btn-default" action="#{moderator.newSession}" />
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{moderator.add_event.equals('3')}" >
+                                <!-- Workshop -->
+                                <br/>
+                                <p:inputText id="workshop_title" placeholder="Workshop title" value="#{moderator.session_title}" required="true" requiredMessage="Required field!" />
+                                <p:tooltip id="tollTipWtitle" for="session_title" value="Required field!" />
+                                <p:inputText id="author1" value="#{moderator.author1}" placeholder="Author" required="true" requiredMessage="Required field!" /><br/>
+                                <p:inputText id="author2" value="#{moderator.author2}" placeholder="Author" />
+                                <p:inputText id="author3" value="#{moderator.author3}" placeholder="Author" /><br/>
+                                <p:inputText id="author4" value="#{moderator.author4}" placeholder="Author" />
+                                <p:commandButton value="Add Workshop" class="btn-default" action="#{moderator.newWorkshop}" />
                             </h:panelGroup>
                         </h:panelGroup>
                     </h:form>
                 </div>
-
             </ui:define>
         </ui:composition>
     </h:body>

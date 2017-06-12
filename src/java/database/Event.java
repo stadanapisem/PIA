@@ -62,6 +62,28 @@ public class Event implements java.io.Serializable {
 
         return ev;
     }
+    
+    public static boolean addEvent(Event c) {
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        boolean ret = false;
+
+        try {
+            tx = session.beginTransaction();
+            session.save(c);
+            tx.commit();
+            ret = true;
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
 
     public Event() {
     }

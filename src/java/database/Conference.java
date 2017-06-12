@@ -138,7 +138,7 @@ public class Conference implements java.io.Serializable {
         long diff = c.dateEnd.getTime() - c.dateBegin.getTime();
         return (int) TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
     }
-    
+
     public Conference() {
     }
 
