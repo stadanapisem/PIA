@@ -85,16 +85,16 @@ public class register {
         byte[] contents = uploadedFile.getContents();
         try {
             BufferedImage bufferedImg = ImageIO.read(new ByteArrayInputStream(contents));
-           // if(bufferedImg.getHeight() > 300 || bufferedImg.getWidth() > 300)
-           //     throw new ValidatorException(new FacesMessage("Image dimensions too large"));
-            
+            // if(bufferedImg.getHeight() > 300 || bufferedImg.getWidth() > 300)
+            //     throw new ValidatorException(new FacesMessage("Image dimensions too large"));
+
             Path folder = Paths.get("C:\\Users\\Miljan\\Documents\\NetBeansProjects\\PIApouksaj8\\web\\WEB-INF\\pics");
             String extention = fileName.substring(fileName.indexOf('.'));
             Path file = Files.createTempFile(folder, fileName + "-", extention);
             this.profilePicture = file.toString();
             InputStream in = uploadedFile.getInputstream();
             Files.copy(in, file, StandardCopyOption.REPLACE_EXISTING);
-            FacesContext.getCurrentInstance().addMessage(null,new FacesMessage("File Uploaded Successfully"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("File Uploaded Successfully"));
         } catch (Exception e) {
             e.printStackTrace();
         }

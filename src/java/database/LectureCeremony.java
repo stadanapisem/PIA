@@ -1,6 +1,7 @@
 package database;
 // Generated Jun 7, 2017 5:07:06 PM by Hibernate Tools 4.3.1
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import org.hibernate.Query;
 import org.hibernate.Transaction;
 import util.NewHibernateUtil;
 
@@ -38,6 +40,31 @@ public class LectureCeremony implements java.io.Serializable {
             session.save(c);
             tx.commit();
             ret = true;
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
+    
+    public static List<Lecture> getAllLecturesForCeremony(Ceremony c) {
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        List<Lecture> ret = null;
+
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("FROM LectureCeremony LC WHERE LC.eid = :eid");
+            query.setParameter("eid", c.getEid());
+            
+            ret = query.list();
+            
+            tx.commit();
         } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();

@@ -2,7 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Facelet Title</title>
     </h:head>
@@ -11,32 +13,41 @@
             <ui:define name="windowTitle">
                 #{show.c.name} Participants
             </ui:define>
-            
+
             <ui:define name="heading">
                 <ui:include src="/templates/login/header.xhtml" />
             </ui:define>
-            
+
             <ui:define name="content">
+                 <f:metadata>
+                    <f:viewParam name="id" value="#{show.cid}" />
+                    <f:event type="preRenderView" listener="#{show.load}" />
+                </f:metadata>
+                
                 <div class="container">
                     <h3>#{show.c.name} Participants:</h3>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <th>Type</th>
-                            <th>Start Time</th>
-                            <th>Day</th>
-                            <th>Hall</th>
-                            <tbody>
-                                <ui:repeat var="i" value="#{show.users}" >
-                                    <tr>
-                                       
-                                        <td>#{i.name}</td>
-                                        <td>#{i.surname}</td>
-                                        <td>#{i.profilePicture}</td>
-                                    </tr>
-                                </ui:repeat>
-                            </tbody>
-                        </table>
-                    </div>
+                    <p:dataTable value="#{show.users}" var="i" class="table table-bordered table-striped">
+                        <p:column style="width: 30px">
+                            <p:rowToggler />
+                        </p:column>
+
+
+                        <p:column headerText="First Name">
+                            #{i.name}
+                        </p:column>
+
+                        <p:column headerText="Surname">
+                            #{i.surname}
+                        </p:column>
+
+                        <p:rowExpansion>
+                            <div class="table-responsive">
+                                #{i.email}
+                                #{i.institution}
+                                #{i.profilePicture}
+                            </div>
+                        </p:rowExpansion>
+                    </p:dataTable>
                 </div>
             </ui:define>
         </ui:composition>

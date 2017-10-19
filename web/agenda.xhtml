@@ -2,7 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>Facelet Title</title>
     </h:head>
@@ -17,6 +19,11 @@
             </ui:define>
 
             <ui:define name="content">
+                <f:metadata>
+                    <f:viewParam name="id" value="#{show.cid}" />
+                    <f:event type="preRenderView" listener="#{show.load}" />
+                </f:metadata>
+                
                 <div class="container" >
                     <h3>#{show.c.name} Agenda:</h3>
                     <div class="table-responsive">
@@ -40,6 +47,54 @@
                         </table>
                     </div>
                 </div>
+                <hr></hr>
+
+                <div class="container" >
+                    <h3>My Agenda:</h3>
+                    <div class="table-responsive">
+                        <p:dataTable value="#{show.events}" var="i" class="table table-bordered table-striped">
+                            <p:ajax listener="#{show.onRowToggle}" event="rowToggle" />
+                            <p:column style="width: 30px">
+                                <p:rowToggler />
+                                
+                            </p:column>
+
+
+                            <p:column headerText="Start Time">
+                                #{i.startTime}
+                            </p:column>
+
+                            <p:column headerText="Day">
+                                #{i.day}
+                            </p:column>
+                            <p:column headerText="Type">
+                                <h:panelGroup rendered="#{i.ceremony.eid == i.eid}">Ceremony</h:panelGroup>
+                                <h:panelGroup rendered="#{i.session.eid == i.eid}">Session</h:panelGroup>
+                                <h:panelGroup rendered="#{i.workshop.eid == i.eid}">Workshop</h:panelGroup>
+                            </p:column>
+                            
+                            <p:rowExpansion>
+                                <div class="table-responsive">
+                                    <p:dataTable value="#{show.lectures}" var="i" styleClass="table table-bordered table-striped" >
+                                        <p:column headerText="Title">
+                                            #{i.title}
+                                        </p:column>
+                                        
+                                        <p:column headerText="Author">
+                                            #{i.author1}
+                                        </p:column>
+                                        
+                                        <p:column>
+                                             <p:commandLink  value="Add to my agenda"/>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </p:rowExpansion>
+                        </p:dataTable>
+
+                    </div>
+                </div>
+                <div style="padding-bottom: 25px"></div>
             </ui:define>
         </ui:composition>
     </h:body>

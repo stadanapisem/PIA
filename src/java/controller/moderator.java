@@ -105,7 +105,7 @@ public class moderator implements Serializable {
 
         updateFields();
         resetVariables();
-        return "moderator?faces-redirect=true";
+        return "moderator";
     }
 
     public String newSession() { // TODO Session overlaping

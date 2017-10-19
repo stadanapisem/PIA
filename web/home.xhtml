@@ -52,14 +52,14 @@
                         <p:tab title="#{i.name}">
                             <h:form>
                                     <!-- agenda -->
-                                    <h:commandLink value="Conference Agenda" action="agenda">
+                                    <h:button value="Conference Agenda" outcome="agenda">
                                         <f:param name="id" value="#{i.cid}" />
-                                    </h:commandLink><br/>
+                                    </h:button><br/>
                                     <h:commandLink value="My Agenda" action="agenda"></h:commandLink><br/>
                                     gallery<br/>
-                                    <h:commandLink value="Participants" action="participants">
+                                    <h:button value="Participants" outcome="participants">
                                         <f:param name="id" value="#{i.cid}" />
-                                    </h:commandLink>
+                                    </h:button>
                               
                             </h:form>
                             <h:form>

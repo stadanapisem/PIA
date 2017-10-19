@@ -2,6 +2,7 @@ package database;
 // Generated Jun 7, 2017 5:07:06 PM by Hibernate Tools 4.3.1
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.Query;
 import org.hibernate.Transaction;
 import util.NewHibernateUtil;
 
@@ -21,7 +23,7 @@ import util.NewHibernateUtil;
  */
 @Entity
 @Table(name = "lecture",
-         catalog = "projekat"
+        catalog = "projekat"
 )
 public class Lecture implements java.io.Serializable {
 
@@ -60,6 +62,31 @@ public class Lecture implements java.io.Serializable {
         return ret;
     }
     
+    public static List<Lecture> getAllLecturesForSession(Session s) {
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        List<Lecture> ret = null;
+
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("FROM Lecture L WHERE L.session = :eid");
+            query.setParameter("eid", s);
+            
+            ret = query.list();
+            
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
+
     public Lecture() {
     }
 
@@ -72,7 +99,7 @@ public class Lecture implements java.io.Serializable {
         this.author3 = author3;
         this.author4 = author4;
     }
-    
+
     public Lecture(Session session, String title, int duration, String file1, String file2) {
         this.session = session;
         this.title = title;
@@ -171,7 +198,7 @@ public class Lecture implements java.io.Serializable {
         this.author4 = author4;
     }
 
-    @Column(name = "file1", nullable = false, length = 200)
+    @Column(name = "file1", length = 200)
     public String getFile1() {
         return this.file1;
     }
@@ -180,7 +207,7 @@ public class Lecture implements java.io.Serializable {
         this.file1 = file1;
     }
 
-    @Column(name = "file2", nullable = false, length = 200)
+    @Column(name = "file2", length = 200)
     public String getFile2() {
         return this.file2;
     }
