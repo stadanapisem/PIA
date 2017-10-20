@@ -19,12 +19,21 @@
             </ui:define>
 
             <ui:define name="content">
-                 <f:metadata>
+                <style>
+                    .glyphicon {  margin-bottom: 10px;margin-right: 10px;}
+
+                    small {
+                        display: block;
+                        line-height: 1.428571429;
+                        color: #999;
+                    }
+                </style>
+                <f:metadata>
                     <f:viewParam name="id" value="#{show.cid}" />
                     <f:event type="preRenderView" listener="#{show.load}" />
                 </f:metadata>
-                
-                <div class="container">
+
+                <div class="container-fluid">
                     <h3>#{show.c.name} Participants:</h3>
                     <p:dataTable value="#{show.users}" var="i" class="table table-bordered table-striped">
                         <p:column style="width: 30px">
@@ -41,11 +50,34 @@
                         </p:column>
 
                         <p:rowExpansion>
-                            <div class="table-responsive">
-                                #{i.email}
-                                #{i.institution}
-                                #{i.profilePicture}
-                            </div>
+                            
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6 col-md-6">
+                                        <div class="well well-sm">
+                                            <div class="row">
+                                                <div class="col-sm-6 col-md-4">
+                                                    <h:panelGroup rendered="#{i.profilePicture != null}">
+                                                        <img src="#{i.profilePicture}" alt="Profile Picture" style="width:300px;height:300px;" class="img-rounded img-responsive" />
+                                                    </h:panelGroup>
+                                                </div>
+                                                <div class="col-sm-6 col-md-8">
+                                                    <h4>#{i.name} #{i.surname}</h4>
+                                                    <small>#{i.institution}</small>
+                                                    <p>
+                                                        <i class="glyphicon glyphicon-envelope"></i>#{i.email} <br/>
+                                                        <i class="glyphicon glyphicon-globe"></i><a href="#{i.linkedin}">LinkedIn</a> <br/>
+                                                    </p>
+                                                    <div class="btn-group">
+                                                        <h:form id="fav_form">
+                                                            <input type="hidden" name="uid" value="#{i.uid}" />
+                                                            <p:commandLink rendered="#{not show.isInFavourites(i.uid)}" value="Add to Favourites!" action="#{show.addToFavourites()}" update="fav_form" />
+                                                        </h:form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                         </p:rowExpansion>
                     </p:dataTable>
                 </div>

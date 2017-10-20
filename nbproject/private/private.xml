@@ -5,30 +5,41 @@
         <group>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Programme.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/controller/register.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/User.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/controller/show.java</file>
-            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/main.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/register.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/index.xhtml</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/options.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/UserConference.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/moderator.xhtml</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/messages.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/controller/home.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Lecture.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Session.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/home.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/controller/moderator.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Favourites.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Workshop.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Ceremony.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/templates/masterLayout.xhtml</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/templates/admin/header.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/participants.xhtml</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/templates/login/header.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/controller/admin.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/admin.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/agenda.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/controller/login.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Agenda.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Comment.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Conference.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/LikeEvent.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Grade.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/LectureCeremony.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/web/gallery.xhtml</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Event.java</file>
             <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Message.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Photo.java</file>
+            <file>file:/C:/Users/Miljan/Documents/NetBeansProjects/PIApouksaj8/src/java/database/Moderator.java</file>
         </group>
     </open-files>
 </project-private>

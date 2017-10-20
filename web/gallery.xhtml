@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="/templates/masterLayout.xhtml">
+            <ui:define name="windowTitle">
+                #{show.c.name} Gallery
+            </ui:define>
+
+            <ui:define name="heading">
+                <ui:include src="templates/login/header.xhtml" />
+            </ui:define>
+
+            <ui:define name="content">
+                <f:metadata>
+                    <f:viewParam name="id" value="#{show.eid}" />
+                    <f:viewParam name="cid" value="#{show.cid}" />
+                    <f:viewParam name="day" value="#{show.day}" />
+                    <f:event type="preRenderView" listener="#{show.loadGallery}" />
+                </f:metadata>
+
+                <div class="container-fluid">
+                    <p:breadCrumb id="dalida">
+
+                        <p:menuitem value="Home" outcome="home" />
+                        <p:menuitem value="Gallery" outcome="gallery?cid=#{show.cid}" />
+                        <p:menuitem value="#{show.day}" outcome="gallery?day=#{show.day}&amp;cid=#{show.cid}" />
+                        <p:menuitem value="#{show.gal_e.session.title}" url="#" rendered="#{show.gal_e.session.eid == show.eid}"/>
+                        <p:menuitem value="#{show.gal_e.workshop.title}" url="#" rendered="#{show.gal_e.workshop.eid == show.eid}" />
+                        <p:menuitem value="#{show.gal_e.startTime}" url="#" rendered="#{show.gal_e.ceremony.eid == show.eid}" />
+                    </p:breadCrumb>
+                    <div style="padding-bottom: 5px" />
+                    <h:panelGroup rendered="#{show.eid != null and show.day != null and show.cid != null}">
+                        <p:galleria value="#{show.photos}" var="i" showCaption="false">
+                            <p:graphicImage value="#{i}" />
+                        </p:galleria>
+
+                        <h:panelGroup rendered="#{show.canAddPhotos()}">
+                            <hr/>
+
+                            <h3>Add new pictures:</h3>
+                            <h:form>
+                                <p:fileUpload id="upload" fileUploadListener="#{show.handleUpload}" label="Upload picture" update="dalida" mode="advanced" auto="true" fileLimit="10" 
+                                              dragDropSupport="false" sizeLimit="1000000" allowTypes="/(\.|\/)(jpe?g|png)$/" />
+                            </h:form>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                    
+                    <h:panelGroup rendered="#{show.eid == null and show.day != null}">
+                        <ui:repeat value="#{show.linksForGallery}" var="i">
+                            <h:form>
+                                <h:button outcome="#{i}" value="#{show.getEventName(i)}" />
+                            </h:form>
+                        </ui:repeat>
+                    </h:panelGroup>
+                    
+                    <h:panelGroup rendered="#{show.eid == null and show.day == null and show.cid != null}">
+                        <ui:repeat value="#{show.linksForGallery}" var="i">
+                            <h:form>
+                                <h:button outcome="#{i}" value="Day #{show.linksForGallery.indexOf(i) + 1}" />
+                            </h:form>
+                        </ui:repeat>
+                    </h:panelGroup>
+                </div>
+                <div style="padding-bottom: 15px" />
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

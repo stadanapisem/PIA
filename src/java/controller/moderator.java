@@ -58,6 +58,11 @@ public class moderator implements Serializable {
             return null;
         }
 
+        if (!Lecture.sameLectureInConference(session_title, c)) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Lecture already exists!"));
+            return null;
+        }
+
         Lecture lecture = new Lecture(Session.getSessionsById(Integer.parseInt(affiliation_session)), session_title, cer_duration, author1, author2, author3, author4);
 
         if (!Lecture.addLecture(lecture)) {
@@ -75,7 +80,7 @@ public class moderator implements Serializable {
 
         updateFields();
         resetVariables();
-        return "moderator?faces-redirect=true";
+        return "moderator?faces-redirect=true&nesto=" + cid;
     }
 
     public String newWorkshop() {
@@ -105,10 +110,10 @@ public class moderator implements Serializable {
 
         updateFields();
         resetVariables();
-        return "moderator";
+        return "moderator?faces-redirect=true&nesto=" + cid;
     }
 
-    public String newSession() { // TODO Session overlaping
+    public String newSession() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(c.getDateBegin());
         cal.add(Calendar.DATE, Integer.parseInt(day_to_add));
@@ -130,6 +135,13 @@ public class moderator implements Serializable {
             }
         }
 
+        for (Session tmp : sessionList) {
+            if (tmp.getEvent().getDay() == Integer.parseInt(day_to_add) && tmp.getEvent().getEid() != event.getEid() && tmp.getHall().getHid() == hall.getHid()) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Hall is already occupied that day!"));
+                return null;
+            }
+        }
+
         Session session = new Session(event, hall, session_title);
 
         if (!Session.addSession(session)) {
@@ -143,7 +155,7 @@ public class moderator implements Serializable {
 
         updateFields();
         resetVariables();
-        return "moderator?faces-redirect=true";
+        return "moderator?faces-redirect=true&nesto=" + cid;
     }
 
     public String newCeremony() {
@@ -173,7 +185,7 @@ public class moderator implements Serializable {
 
         updateFields();
         resetVariables();
-        return "moderator?faces-redirect=true";
+        return "moderator?faces-redirect=true&nesto=" + cid;
     }
 
     private void updateFields() {
@@ -208,16 +220,17 @@ public class moderator implements Serializable {
 
     public moderator() {
         //cid = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("nesto");
-        if(cid != null)
+        if (cid != null) {
             updateFields();
+        }
     }
 
-    
     public void load() {
-        if(cid != null)
+        if (cid != null) {
             updateFields();
+        }
     }
-    
+
     public void getParameter() {
 
     }

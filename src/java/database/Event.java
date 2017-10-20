@@ -41,6 +41,23 @@ public class Event implements java.io.Serializable {
     private Workshop workshop;
     private Set<Programme> programmes = new HashSet<Programme>(0);
 
+    @Override
+    public boolean equals(Object object) {
+        boolean isEqual = false;
+        System.out.println(((Event) object).eid);
+
+        if (object != null && object instanceof Event) {
+            isEqual = (this.eid == ((Event) object).eid);
+        }
+
+        return isEqual;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.eid;
+    }
+
     public static List<Integer> getAllEventsForConference(Conference c) {
         List<Integer> ev = null;
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
@@ -58,6 +75,8 @@ public class Event implements java.io.Serializable {
                 tx.rollback();
             }
             e.printStackTrace();
+        } finally {
+            session.close();
         }
 
         return ev;
@@ -82,6 +101,8 @@ public class Event implements java.io.Serializable {
                 tx.rollback();
             }
             e.printStackTrace();
+        } finally {
+            session.close();
         }
 
         return ev;

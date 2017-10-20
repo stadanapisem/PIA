@@ -1,23 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controller;
 
 import database.Agenda;
 import database.Conference;
 import database.Location;
+import database.Message;
 import database.Moderator;
 import database.User;
+import database.UserConference;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.faces.application.FacesMessage;
@@ -38,10 +37,10 @@ import javax.faces.validator.ValidatorException;
 public class admin implements Serializable {
 
     private String name, password, area;
-    
-    @ManagedProperty(value="#{param.cancel_id}")
+
+    @ManagedProperty(value = "#{param.cancel_id}")
     private Integer cancel_id;
-    
+
     private Integer location_id;
     private Date start, end;
     private List<Conference> conferences;
@@ -50,28 +49,41 @@ public class admin implements Serializable {
     private String[] mods;
     private String[] areas = {"Electrical and Computer Engineering", "Architecture", "Civil Engineering and Geodesy", "Mechanical and Industrial Engineering", "Medicine", "Phisyics - Chemistry", "Biology", "Environmental safety"};
 
-    // TODO delete Conf, send messages
-    
+    @ManagedProperty(value = "#{login}")
+    private login login;
+
     public String cancelConf() {
-        System.out.println(cancel_id);
+
         Conference to_del = null;
-        
-        for(Conference c : conferences)
-            if(c.getCid() == cancel_id) {
+        List<Conference> conf_bak = new ArrayList(conferences);
+
+        for (Conference c : conf_bak) {
+            if (c.getCid() == cancel_id) {
                 to_del = c;
                 conferences.remove(c);
             }
-        
-        List<User> to_send = Agenda.allUsersForConference(to_del);
-        
-        if(to_del == null)
+        }
+
+        List<Integer> to_send = UserConference.getUsersConference(to_del);
+        String message = "Conference " + to_del.getName() + " has been cancelled. We truly apologise for the inconvenience that it might have caused. For further details, you will be contacted by the conferences' organisation team.";
+
+        if (to_del == null) {
             return "error";
-        
-        Conference.deleteConference(to_del);
-        
+        }
+
+        if (!Conference.deleteConference(to_del)) {
+            return "error";
+        }
+
+        Date current = new Date();
+        for (Integer to : to_send) {
+            Message m = new Message(login.getUser(), User.getUserById(to), message, current);
+            Message.addMessage(m);
+        }
+
         return null;
     }
-    
+
     public String send() {
         byte[] salt_bytes = getSaltB();
         int iter = 10000;
@@ -99,7 +111,7 @@ public class admin implements Serializable {
         }
 
         conferences.add(conf);
-        
+
         return FacesContext.getCurrentInstance().getViewRoot().getViewId() + "?faces-redirect=true";
     }
 
@@ -163,6 +175,18 @@ public class admin implements Serializable {
         conferences = Conference.getAllConferences();
         locations = Location.getAllLocations();
         users = User.getAllUsers();
+    }
+
+    @PostConstruct
+    public void checkLogin() {
+        try {
+            if (login == null || (login != null && login.getUser() == null)) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("index.xhtml?faces-redirect=true");
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String getName() {
@@ -247,6 +271,14 @@ public class admin implements Serializable {
 
     public void setCancel_id(Integer cancel_id) {
         this.cancel_id = cancel_id;
+    }
+
+    public login getLogin() {
+        return login;
+    }
+
+    public void setLogin(login login) {
+        this.login = login;
     }
 
 }

@@ -40,34 +40,34 @@ made subject to such option by the copyright holder.
 Contributor(s):
 -->
 <hibernate-configuration>
-  <session-factory>
-    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
-    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/projekat?zeroDateTimeBehavior=convertToNull</property>
-    <property name="hibernate.connection.username">root</property>
-    <property name="hibernate.show_sql">true</property>
-    <property name="hibernate.current_session_context_class">thread</property>
-    <property name="hibernate.query.factory_class">org.hibernate.hql.internal.classic.ClassicQueryTranslatorFactory</property>
-    <property name="hibernate.enable_lazy_load_no_trans">true</property>
-    <mapping class="database.Programme"/>
-    <mapping class="database.Hall"/>
-    <mapping class="database.Message"/>
-    <mapping class="database.Workshop"/>
-    <mapping class="database.Photo"/>
-    <mapping class="database.Moderator"/>
-    <mapping class="database.Conference"/>
-    <mapping class="database.Lecture"/>
-    <mapping class="database.LikeEvent"/>
-    <mapping class="database.Comment"/>
-    <mapping class="database.LectureCeremony"/>
-    <mapping class="database.Agenda"/>
-    <mapping class="database.Ceremony"/>
-    <mapping class="database.Grade"/>
-    <mapping class="database.Location"/>
-    <mapping class="database.Session"/>
-    <mapping class="database.Event"/>
-    <mapping class="database.Favourites"/>
-    <mapping class="database.User"/>
-    <mapping class="database.UserConference"/>
-  </session-factory>
+    <session-factory>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/projekat?zeroDateTimeBehavior=convertToNull</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.current_session_context_class">thread</property>
+        <property name="hibernate.query.factory_class">org.hibernate.hql.internal.classic.ClassicQueryTranslatorFactory</property>
+        <property name="hibernate.enable_lazy_load_no_trans">true</property>
+        <mapping class="database.Programme"/>
+        <mapping class="database.Hall"/>
+        <mapping class="database.Message"/>
+        <mapping class="database.Workshop"/>
+        <mapping class="database.Photo"/>
+        <mapping class="database.Moderator"/>
+        <mapping class="database.Conference"/>
+        <mapping class="database.Lecture"/>
+        <mapping class="database.LikeEvent"/>
+        <mapping class="database.Comment"/>
+        <mapping class="database.LectureCeremony"/>
+        <mapping class="database.Agenda"/>
+        <mapping class="database.Ceremony"/>
+        <mapping class="database.Grade"/>
+        <mapping class="database.Location"/>
+        <mapping class="database.Session"/>
+        <mapping class="database.Event"/>
+        <mapping class="database.Favourites"/>
+        <mapping class="database.User"/>
+        <mapping class="database.UserConference"/>
+    </session-factory>
 </hibernate-configuration>

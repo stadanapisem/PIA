@@ -28,6 +28,51 @@ import util.NewHibernateUtil;
             , @UniqueConstraint(columnNames = "username")}
 )
 public class User implements java.io.Serializable {
+    
+    public static List<User> getSomeUsers(String q) {
+        List<User> ret = null;
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("FROM User U WHERE lower(U.name) LIKE lower(:arg) OR lower(U.surname) LIKE lower(:arg) OR lower(U.username) LIKE lower(:arg)");
+            query.setParameter("arg", "%" + q + "%");
+            ret = query.list();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
+
+    public static boolean updateUser(User u) {
+        boolean ret = false;
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+
+        try {
+            tx = session.beginTransaction();
+            session.update(u);
+            tx.commit();
+            ret = true;
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
 
     public static List<User> getAllUsers() {
         List<User> ret = null;
@@ -78,7 +123,7 @@ public class User implements java.io.Serializable {
 
         return ret;
     }
-    
+
     public static User getUserById(Integer uid) {
         User ret = null;
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
@@ -109,8 +154,9 @@ public class User implements java.io.Serializable {
 
     public static boolean checkExistance(String username) {
         boolean ret = false;
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
         try {
-            org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+            
             Transaction tx = session.beginTransaction();
             Query query = session.createQuery("FROM User E WHERE E.username = :username");
             query.setParameter("username", username);
@@ -124,6 +170,8 @@ public class User implements java.io.Serializable {
             session.close();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            session.close();
         }
 
         return ret;

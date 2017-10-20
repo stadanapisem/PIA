@@ -39,9 +39,9 @@ public class Moderator implements java.io.Serializable {
             tx = session.beginTransaction();
             Query query = session.createSQLQuery("SELECT M.cid FROM Moderator M WHERE M.uid = :uid");
             query.setParameter("uid", u);
-            
+
             ret = query.list();
-            
+
             tx.commit();
         } catch (Exception e) {
             if (tx != null) {

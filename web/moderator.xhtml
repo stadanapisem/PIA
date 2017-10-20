@@ -29,7 +29,7 @@
                     <h3>#{moderator.c.name} Agenda:</h3>
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped">
-                            <th>Name</th>
+                            <th>Day</th>
                             <th>Start Time</th>
                             <th>Type</th>
                             <tbody>
@@ -64,9 +64,9 @@
 
                     <h:form id="add_form">
 
-                        <p:inputNumber id="day_to_add" maxValue="#{moderator.conf_dur}" value="#{moderator.day_to_add}" placeholder="Day" />
+                        <p:inputNumber id="day_to_add" maxValue="#{moderator.conf_dur}" value="#{moderator.day_to_add}" placeholder="Day" required="true" requiredMessage="You must put in the day!" />
                         <p:tooltip id="toolTipDay" for="day_to_add" value="Cannot be grater than #{moderator.conf_dur}" />
-                        <p:inputMask id="start_time" placeholder="Start Time" value="#{moderator.start_time}" mask="99:99" />
+                        <p:inputMask id="start_time" placeholder="Start Time" value="#{moderator.start_time}" mask="99:99" required="true" requiredMessage="You must state the starting time!" />
                         <h:panelGroup id="update_form">
 
                             <h:panelGroup rendered="#{moderator.add_event.equals('1')}">
@@ -80,7 +80,7 @@
                             <h:panelGroup rendered="#{moderator.add_event.equals('2')}" style="padding-top: 10px">
                                 <!-- Session -->
                                 <br/>
-                                <p:inputText id="session_title" placeholder="Session title" value="#{moderator.session_title}" required="true" requiredMessage="Required field!" />
+                                <p:inputText id="session_title" placeholder="Session title" value="#{moderator.session_title}" required="true" requiredMessage="You must fill in the session title!" />
                                 <p:tooltip id="tollTipStitle" for="session_title" value="Required field!" />
                                 <p:selectOneMenu style="vertical-align: middle" id="session_hall" value="#{moderator.session_hall}" >
                                     <f:selectItem itemLabel="Select Hall" />

@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="/templates/masterLayout.xhtml">
+            <ui:define name="windowTitle">
+                Profile Options
+            </ui:define>
+
+            <ui:define name="heading">
+                <ui:include src="/templates/login/header.xhtml" />
+            </ui:define>
+
+            <ui:define name="content">
+                <div class="container-fluid">
+                    <style>
+                        .form-singin {
+                            max-width: 750px;
+                            padding: 15px;
+                            margin: 0 auto;
+                        }
+
+                        .form-singin .form-control {
+                            position: relative;
+                            height: auto;
+                            -webkit-box-sizing: border-box;
+                            -moz-box-sizing: border-box;
+                            box-sizing: border-box;
+                            padding: 10px;
+                            font-size: 16px;
+                        }
+                    </style>
+
+
+                    <h:form class="form-singin">
+                        <h3>Change Password:</h3>
+                        <p:tooltip />
+                        <h:panelGrid columns="2">
+                            <p:password id="password_old" class="form-control" placeholder="Current Password" value="#{login.old_password}" validator="#{login.oldPassValidator}" required="true" requiredMessage="Field Required!" />
+                            <p:message id="password_old_mess" for="password_old" />
+                            <p:password id="password_new" class="form-control" placeholder="New Password" value="#{login.password}" match="password_confirm_new"  required="true" validatorMessage="Passwords don't match!" requiredMessage="Field Required!">
+                            </p:password>
+                            <p:message id="password_error" for="password_new" />
+
+                            <p:password id="password_confirm_new" class="form-control" value="#{login.password}" placeholder="Confirm New Password" validator="#{login.PassValidator}" required="true" requiredMessage="Field Required!">
+                            </p:password>
+                            <p:message id="passwordc_error" for="password_confirm_new" />
+
+                            <h:commandButton value="Change" action="#{login.changePassword}" class="btn btn-lg btn-primary btn-block" />
+                        </h:panelGrid>
+                    </h:form>
+
+                </div>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

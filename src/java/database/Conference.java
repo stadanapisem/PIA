@@ -76,7 +76,11 @@ public class Conference implements java.io.Serializable {
 
         try {
             tx = session.beginTransaction();
-            session.delete(c);
+            Query query = session.createSQLQuery("DELETE FROM Conference WHERE cid = :cid");
+            query.setParameter("cid", c.getCid());
+            
+            query.executeUpdate();
+            
             tx.commit();
             ret = true;
         } catch (Exception e) {

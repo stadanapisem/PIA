@@ -2,3 +2,5 @@ build/
 /dist/
 web/resources
 web/WEB-INF/pics
+web/pics
+web/docs

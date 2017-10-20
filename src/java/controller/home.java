@@ -3,25 +3,26 @@ package controller;
 import database.Conference;
 import database.Message;
 import database.Moderator;
+import database.User;
 import database.UserConference;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ValidationException;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -39,11 +40,28 @@ public class home implements Serializable {
     private Integer cid;
     private List<Message> myInbox = new ArrayList<>(), myOutbox = new ArrayList<>();
     private List<Integer> isModerator;
-    private String add_event;
+    private Map<String, Integer> user_name_id;
+    private String add_event, recipient, message;
 
     @ManagedProperty(value = "#{login}")
     private login login;
-    
+
+    public String sendMessage() {
+        List<User> tmpusers = User.getSomeUsers(recipient);
+
+        if (tmpusers.size() == 0 || tmpusers.size() > 1) {
+            throw new ValidatorException(new FacesMessage("Wrong recipient"));
+        }
+
+        Message mess = new Message(login.getUser(), tmpusers.get(0), message, new Date());
+
+        if (!Message.addMessage(mess)) {
+            return "error";
+        }
+
+        return null;
+    }
+
     public String signUp() {
         Conference tmp = null;
 
@@ -55,7 +73,8 @@ public class home implements Serializable {
         }
 
         if (!checkHash(password, tmp.getPassword(), tmp.getSalt(), tmp.getIterations())) {
-            throw new ValidatorException(new FacesMessage("Wrong password!"));
+            FacesContext.getCurrentInstance().addMessage("password_error", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Wrong Password", "You entered a wrong password!"));
+            return null;
         }
 
         UserConference uc = new UserConference(tmp, login.getUser());
@@ -63,6 +82,7 @@ public class home implements Serializable {
             return "error";
         }
 
+        RequestContext.getCurrentInstance().execute("PF('dlg').hide()");
         return FacesContext.getCurrentInstance().getViewRoot().getViewId() + "?faces-redirect=true";
     }
 
@@ -70,11 +90,11 @@ public class home implements Serializable {
         cid = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("singup_id"));
         //System.out.println(cid);
     }
-    
+
     public String goToMod() {
-         Integer cid = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("cid_tomod"));
-         
-         return "moderator?cid=" + cid.toString();
+        Integer cid = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("cid_tomod"));
+
+        return "moderator?cid=" + cid.toString();
     }
 
     public void search() {
@@ -136,7 +156,7 @@ public class home implements Serializable {
     }
 
     public List<String> completeName(String query) {
-        List<String> ret = new ArrayList<String>(); // TO DO AND NOT ALREADY IN LIST
+        List<String> ret = new ArrayList<String>();
 
         for (Conference c : allConfs) {
             if (c.getName().toLowerCase().contains(query.toLowerCase())) {
@@ -177,12 +197,36 @@ public class home implements Serializable {
         return ret;
     }
 
+    public List<String> completeRecipient(String query) {
+        List<String> ret = new ArrayList<>();
+        user_name_id = new HashMap<>();
+
+        List<User> tmp = User.getSomeUsers(query);
+
+        for (User x : tmp) {
+            ret.add(x.getName() + " " + x.getSurname());
+            user_name_id.put(x.getName() + " " + x.getSurname(), x.getUid());
+        }
+
+        return ret;
+    }
+
     public home() {
 
     }
 
     @PostConstruct
     public void load() {
+
+        try {
+            if (login == null || (login != null && login.getUser() == null)) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("index.xhtml?faces-redirect=true");
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         List<Integer> tmp1 = Message.getAllMessagesForUser(login.getUser());
         for (int i = 0; i < tmp1.size(); i++) {
             Message tmpmess = Message.getMessageById(tmp1.get(i));
@@ -206,8 +250,16 @@ public class home implements Serializable {
                 }
             }
         }
-        
+
         isModerator = Moderator.getModeratedForUser(login.getUser());
+        String atr_cid = (String) FacesContext.getCurrentInstance().getExternalContext().getRequestMap().get("cid");
+        if (atr_cid != null && !atr_cid.isEmpty()) {
+            cid = Integer.parseInt(atr_cid);
+        }
+
+        if (cid != null) {
+            filteredConfs.add(Conference.getConferenceById(cid));
+        }
     }
 
     public login getLogin() {
@@ -329,5 +381,21 @@ public class home implements Serializable {
     public void setCid(Integer cid) {
         this.cid = cid;
     }
-    
+
+    public String getRecipient() {
+        return recipient;
+    }
+
+    public void setRecipient(String recipient) {
+        this.recipient = recipient;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
 }

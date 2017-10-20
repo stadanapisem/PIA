@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controller;
 
 import database.User;
@@ -18,12 +13,10 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import javax.inject.Named;
-import javax.enterprise.context.Dependent;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
@@ -36,7 +29,7 @@ import org.primefaces.model.UploadedFile;
  * @author Miljan
  */
 @ManagedBean(name = "register")
-@SessionScoped
+@ViewScoped
 public class register {
 
     private Integer uid;
@@ -54,12 +47,18 @@ public class register {
     private String shirtSize;
     private String linkedin;
     private byte type;
-    private boolean valid = false, username_valid = false, password_valid = false, passwords_match = false;
+    private String cid;
+    private String eid;
+    
+    @ManagedProperty(value = "#{login}")
+    private login login;
 
     public void UserValidator(FacesContext fc, UIComponent c, Object value) {
-        username_valid = User.checkExistance((String) value);
-        update_validity();
-        if (!username_valid) {
+
+        if (value == null || ((String)value).isEmpty()) {
+            throw new ValidatorException(new FacesMessage("Field Required!"));
+        }
+        if (!User.checkExistance((String) value)) {
             throw new ValidatorException(new FacesMessage("Username already in use!"));
         }
     }
@@ -70,13 +69,8 @@ public class register {
         String pattern = "^(?!.*(.)\\1{2})([A-Za-z0-9])(?=(.*[a-z].*){3,})(?=.*\\d.*)(?=.*\\W.*)[a-zA-Z0-9\\S]{7,11}$";
 
         if (!pass.matches(pattern)) {
-            password_valid = false;
-            update_validity();
             throw new ValidatorException(new FacesMessage("Password needs to contain between 8 and 12 characters. Among them: at least 1 uppercase, at least 3 lowercase, at least 1 numercal and at least 1 special. Password cannot contain 2 same characters after oneanother!"));
         }
-
-        password_valid = true;
-        update_validity();
     }
 
     public void handleUpload(FileUploadEvent event) {
@@ -88,10 +82,10 @@ public class register {
             // if(bufferedImg.getHeight() > 300 || bufferedImg.getWidth() > 300)
             //     throw new ValidatorException(new FacesMessage("Image dimensions too large"));
 
-            Path folder = Paths.get("C:\\Users\\Miljan\\Documents\\NetBeansProjects\\PIApouksaj8\\web\\WEB-INF\\pics");
+            Path folder = Paths.get("C:\\Users\\Miljan\\Documents\\NetBeansProjects\\PIApouksaj8\\web\\pics");
             String extention = fileName.substring(fileName.indexOf('.'));
             Path file = Files.createTempFile(folder, fileName + "-", extention);
-            this.profilePicture = file.toString();
+            this.profilePicture = file.toString().substring(file.toString().indexOf("pics"));
             InputStream in = uploadedFile.getInputstream();
             Files.copy(in, file, StandardCopyOption.REPLACE_EXISTING);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("File Uploaded Successfully"));
@@ -104,14 +98,8 @@ public class register {
         String pass = (String) value;
 
         if (!pass.equals(password)) {
-            passwords_match = false;
-            update_validity();
             throw new ValidatorException(new FacesMessage("Passwords don't match!"));
         }
-
-        passwords_match = true;
-        update_validity();
-
     }
 
     private byte[] getSaltB() {
@@ -142,6 +130,10 @@ public class register {
     }
 
     public String send() {
+        if (!User.checkExistance(username)) {
+            throw new ValidatorException(new FacesMessage("Username already in use!"));
+        }
+
         byte[] salt_bytes = getSaltB();
         int iter = 10000;
         String tmp_pass = generateHash(password, salt_bytes, iter);
@@ -150,6 +142,17 @@ public class register {
         boolean ret = User.addUser(user);
 
         if (ret) {
+            if (cid != null && !cid.isEmpty()) {
+                login.setUser(user);
+                FacesContext.getCurrentInstance().getExternalContext().getRequestMap().put("cid", cid);
+                return "home";
+            }
+            
+            if(eid != null && !eid.isEmpty()) {
+                login.setUser(user);
+                return "agenda?eid=" + eid + "&id=" + cid;
+            }
+
             return "index";
         }
 
@@ -157,10 +160,6 @@ public class register {
     }
 
     public register() {
-    }
-
-    public void update_validity() {
-        valid = username_valid && password_valid && passwords_match;
     }
 
     public Integer getUid() {
@@ -275,20 +274,36 @@ public class register {
         this.type = type;
     }
 
-    public boolean isValid() {
-        return valid;
-    }
-
-    public void setValid(boolean valid) {
-        this.valid = valid;
-    }
-
     public String getPassword2() {
         return password2;
     }
 
     public void setPassword2(String password2) {
         this.password2 = password2;
+    }
+
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(String cid) {
+        this.cid = cid;
+    }
+
+    public login getLogin() {
+        return login;
+    }
+
+    public void setLogin(login login) {
+        this.login = login;
+    }
+
+    public String getEid() {
+        return eid;
+    }
+
+    public void setEid(String eid) {
+        this.eid = eid;
     }
 
 }

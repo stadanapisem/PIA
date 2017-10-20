@@ -24,7 +24,7 @@ import util.NewHibernateUtil;
  */
 @Entity
 @Table(name = "message",
-         catalog = "projekat"
+        catalog = "projekat"
 )
 public class Message implements java.io.Serializable {
 
@@ -34,6 +34,28 @@ public class Message implements java.io.Serializable {
     private String text;
     private Date time;
 
+    public static boolean addMessage(Message c) {
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        boolean ret = false;
+
+        try {
+            tx = session.beginTransaction();
+            session.save(c);
+            tx.commit();
+            ret = true;
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
+    
     public static List<Integer> getAllMessagesForUser(User u) {
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
@@ -43,9 +65,9 @@ public class Message implements java.io.Serializable {
             tx = session.beginTransaction();
             Query query = session.createSQLQuery("SELECT mid FROM Message WHERE uid1 = :uid OR udi2 = :uid ORDER BY time DESC");
             query.setParameter("uid", u.getUid());
-            
+
             ret = query.list();
-            
+
             tx.commit();
         } catch (Exception e) {
             if (tx != null) {
@@ -58,7 +80,7 @@ public class Message implements java.io.Serializable {
 
         return ret;
     }
-    
+
     public static Message getMessageById(Integer mid) {
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
@@ -68,11 +90,12 @@ public class Message implements java.io.Serializable {
             tx = session.beginTransaction();
             Query query = session.createQuery("FROM Message M WHERE M.mid = :mid");
             query.setParameter("mid", mid);
-            
+
             List<Message> res = query.list();
-            if(res != null && res.size() > 0)
+            if (res != null && res.size() > 0) {
                 ret = res.get(0);
-            
+            }
+
             tx.commit();
         } catch (Exception e) {
             if (tx != null) {
@@ -85,7 +108,7 @@ public class Message implements java.io.Serializable {
 
         return ret;
     }
-    
+
     public Message() {
     }
 

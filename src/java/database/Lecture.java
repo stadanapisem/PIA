@@ -40,6 +40,88 @@ public class Lecture implements java.io.Serializable {
     private Set<Grade> grades = new HashSet<Grade>(0);
     private Set<LectureCeremony> lectureCeremonies = new HashSet<LectureCeremony>(0);
 
+    public static boolean sameLectureInConference(String title, Conference C) {
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        boolean ret = false;
+
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createSQLQuery("SELECT L.lid FROM Lecture L, Session S, Event E, Programme P WHERE L.lid = S.lid AND S.eid = E.eid AND P.eid = E.eid AND P.cid = :cid AND L.title = :title");
+            query.setParameter("title", title);
+            query.setParameter("cid", C.getCid());
+            
+            List<Integer> res = query.list();
+            
+            if(res != null && res.size() > 0)
+                ret = false;
+            else if(res != null && res.size() == 0)
+                ret = true;
+            
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
+    
+    public static boolean updateLecture(Lecture c) {
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        boolean ret = false;
+
+        try {
+            tx = session.beginTransaction();
+            session.update(c);
+            tx.commit();
+            ret = true;
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
+
+    public static Lecture getLectureById(Integer id) {
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        Lecture ret = null;
+
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("FROM Lecture L WHERE L.lid = :lid");
+            query.setParameter("lid", id);
+
+            List<Lecture> ans = query.list();
+
+            if (ans != null && ans.size() > 0) {
+                ret = ans.get(0);
+            }
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
+
     public static boolean addLecture(Lecture c) {
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
@@ -61,7 +143,7 @@ public class Lecture implements java.io.Serializable {
 
         return ret;
     }
-    
+
     public static List<Lecture> getAllLecturesForSession(Session s) {
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;
@@ -71,9 +153,9 @@ public class Lecture implements java.io.Serializable {
             tx = session.beginTransaction();
             Query query = session.createQuery("FROM Lecture L WHERE L.session = :eid");
             query.setParameter("eid", s);
-            
+
             ret = query.list();
-            
+
             tx.commit();
         } catch (Exception e) {
             if (tx != null) {

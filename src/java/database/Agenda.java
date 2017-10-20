@@ -30,6 +30,97 @@ public class Agenda implements java.io.Serializable {
     private Event event;
     private User user;
 
+    @Override
+    public boolean equals(Object object) {
+        boolean isEqual = false;
+
+        if (object != null && object instanceof Agenda) {
+            isEqual = (this.agid == ((Agenda) object).agid);
+        }
+
+        return isEqual;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.agid;
+    }
+
+    public static boolean isEventInMyAgenda(Event ev, User u) {
+        boolean ret = false;
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("FROM Agenda A WHERE A.user = :user AND A.event = :event");
+            query.setParameter("user", u);
+            query.setParameter("event", ev);
+            
+            List<Agenda> ag = query.list();
+            
+            if(ag != null && ag.size() > 0)
+                ret = true;
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
+    
+    public static boolean addEventForUser(Agenda ag) {
+        boolean ret = false;
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+
+        try {
+            tx = session.beginTransaction();
+            session.save(ag);
+            tx.commit();
+            ret = true;
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ret;
+    }
+
+    public static List<Agenda> getMyAgenda(User u) {
+        List<Agenda> ag = null;
+        org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+
+        try {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("FROM Agenda A WHERE A.user = :user");
+            query.setParameter("user", u);
+            ag = query.list();
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        return ag;
+    }
+
     public static List<User> allUsersForConference(Conference c) {
         List<User> u = null;
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
@@ -47,6 +138,8 @@ public class Agenda implements java.io.Serializable {
                 tx.rollback();
             }
             e.printStackTrace();
+        } finally {
+            session.close();
         }
 
         return u;
@@ -70,6 +163,8 @@ public class Agenda implements java.io.Serializable {
                 tx.rollback();
             }
             e.printStackTrace();
+        } finally {
+            session.close();
         }
 
         return conf;
@@ -95,7 +190,7 @@ public class Agenda implements java.io.Serializable {
         this.agid = agid;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "eid", nullable = false)
     public Event getEvent() {
         return this.event;

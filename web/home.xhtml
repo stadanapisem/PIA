@@ -20,66 +20,47 @@
 
             <ui:define name="content">
                 <p:tooltip />
-                <p:dialog header="Messages" widgetVar="messages">
-                    <h:form>
-                        <p:accordionPanel>
-                            <p:tab title="Inbox">
-                                <p:accordionPanel value="#{home.myInbox}" var="i">
-                                    <p:tab title="#{i.userByUdi2.name.concat(' ').concat(i.userByUdi2.surname)}">
-                                        <div class="small">#{i.time}</div>
-                                        #{i.text}
-                                    </p:tab>
-                                </p:accordionPanel>
-                            </p:tab>
-                            <p:tab title="Outbox">
-                                <p:accordionPanel value="#{home.myOutbox}" var="i">
-                                    <p:tab title="#{i.userByUid1.name.concat(' ').concat(i.userByUid1.surname)}">
-                                        <div class="small">#{i.time}</div>
-                                        #{i.text}
-                                    </p:tab>
-                                </p:accordionPanel>
+
+                <div class="container-fluid">
+                    <h:panelGroup rendered="#{login.user != null}" >
+                        <h3>My Conferences</h3>
+                        <p:accordionPanel value="#{home.myConferences}" var="i">
+                            <p:tab title="#{i.name}">
+
+                                <!-- agenda -->
+                                <table class="table table-responsive">
+                                    <td>
+                                        <h:form>
+                                            <h:outputLink value="agenda.xhtml?id=#{i.cid}" >Agenda</h:outputLink>
+                                        </h:form>
+                                    </td>
+                                    <td>
+                                        <h:form>
+                                            <h:outputLink value="participants.xhtml?id=#{i.cid}">Conference Participants</h:outputLink>
+
+                                        </h:form>
+                                    </td>
+                                    <td>
+                                        <h:form>
+                                            <h:outputLink rendered="#{home.isModerator.contains(i.cid)}" value="moderator.xhtml?nesto=#{i.cid}">Moderator Panel</h:outputLink>
+                                        </h:form>
+                                    </td>
+                                </table>
                             </p:tab>
                         </p:accordionPanel>
-                    </h:form>
-                </p:dialog>
 
+                        <hr></hr>
+                    </h:panelGroup>
 
-
-                <div class="container">
-
-                    <h3>My Conferences</h3>
-                    <p:accordionPanel value="#{home.myConferences}" var="i">
-                        <p:tab title="#{i.name}">
-                            <h:form>
-                                    <!-- agenda -->
-                                    <h:button value="Conference Agenda" outcome="agenda">
-                                        <f:param name="id" value="#{i.cid}" />
-                                    </h:button><br/>
-                                    <h:commandLink value="My Agenda" action="agenda"></h:commandLink><br/>
-                                    gallery<br/>
-                                    <h:button value="Participants" outcome="participants">
-                                        <f:param name="id" value="#{i.cid}" />
-                                    </h:button>
-                              
-                            </h:form>
-                            <h:form>
-                                <h:button class="btn-sm btn-default" outcome="moderator" value="Moderate!" rendered="#{home.isModerator.contains(i.cid)}">
-                                    <f:param name="nesto" value="#{i.cid}" />
-                                </h:button>
-                            </h:form>
-                        </p:tab>
-                    </p:accordionPanel>
-
-                    <hr></hr>
-                    <div class="content" >
+                    <div class="container-fluid" >
                         <h3>Search</h3>
                         <div class="form-horizontal">
                             <h:form>
                                 <h:panelGrid columns="2">
                                     <p:autoComplete id="name" value="#{home.name}" placeholder="Name" completeMethod="#{home.completeName}" minQueryLength="3" />
                                     <div></div>
-                                    <p:autoComplete id="place" value="#{home.place}" placeholder="Place" completeMethod="#{home.completePlace}" minQueryLength="3" />
-                                    <p:autoComplete id="area" value="#{home.area}" placeholder="Area" completeMethod="#{home.completeArea}" minQueryLength="3" />
+                                    <p:autoComplete id="place" value="#{home.place}" placeholder="Place" completeMethod="#{home.completePlace}" minQueryLength="3" rendered="#{login.user != null}" />
+                                    <p:autoComplete id="area" value="#{home.area}" placeholder="Area" completeMethod="#{home.completeArea}" minQueryLength="3" rendered="#{login.user != null}" />
                                     <p:calendar id="start" value="#{home.start}" placeholder="Start Date" />
                                     <p:calendar id="end" value="#{home.end}" placeholder="End Date" />
                                     <p:commandButton update="dalidalidada" process="@all" actionListener="#{home.search}" value="Search" />
@@ -103,9 +84,17 @@
                                                     <td>#{i.dateEnd}</td>
                                                     <td>#{i.area}</td>
                                                     <td>#{i.location.name}</td>
-                                                    <td><h:form><p:commandButton id="singup_button" style="color: blue" value="Sign Up!" action="#{home.test}" oncomplete="PF('dlg').show();" >
+                                                    <td>
+                                                        <h:form>
+                                                            <p:commandButton id="singup_button" style="color: blue" value="Sign Up!" action="#{home.test}" oncomplete="PF('dlg').show();" rendered="#{login.user != null}" >
                                                                 <input type="hidden" name="singup_id" id="singup_id" value="#{i.cid}" />
-                                                            </p:commandButton></h:form>
+                                                            </p:commandButton>
+                                                        </h:form>
+                                                        <h:form>
+                                                            <h:button id="register_button" value="Register First!" outcome="register" rendered="#{login.user == null}" >
+                                                                <f:param name="conf_id" value="#{i.cid}" />
+                                                            </h:button>
+                                                        </h:form>
                                                     </td>
                                                 </tr>
                                             </ui:repeat>
@@ -121,10 +110,10 @@
                 </div>
                 <p:dialog header="Input password" widgetVar="dlg">
                     <h:form id="dialog_form">
-                        <p:password id="password" class="form-control" placeholder="#{singup}" value="#{home.password}" required="true" requiredMessage="Field Required!">
+                        <p:password id="password" class="form-control" placeholder="Conference password" value="#{home.password}" required="true" requiredMessage="Field Required!">
                         </p:password>
-                        <p:message id="password_error" for="password" />
-                        <p:commandButton value="Sign Up!" action="#{home.signUp}" oncomplete="PF('dlg').hide();" />
+                        <p:messages id="password_error" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:commandButton value="Sign Up!" action="#{home.signUp}" />
                     </h:form>
                 </p:dialog>
             </ui:define>

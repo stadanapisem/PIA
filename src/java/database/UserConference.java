@@ -80,7 +80,7 @@ public class UserConference implements java.io.Serializable {
 
         return ret;
     }
-    
+
     public static List<Integer> getUsersConference(Conference c) {
         org.hibernate.Session session = NewHibernateUtil.getSessionFactory().openSession();
         Transaction tx = null;

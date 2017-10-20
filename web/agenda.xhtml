@@ -11,7 +11,7 @@
     <h:body>
         <ui:composition template="/templates/masterLayout.xhtml">
             <ui:define name="windowTitle">
-                #{show.c.name} Agenda
+                My Agenda
             </ui:define>
 
             <ui:define name="heading">
@@ -19,44 +19,56 @@
             </ui:define>
 
             <ui:define name="content">
+                <div id="fb-root"></div>
                 <f:metadata>
                     <f:viewParam name="id" value="#{show.cid}" />
+                    <f:viewParam name="eid" value="#{show.eid}" />
                     <f:event type="preRenderView" listener="#{show.load}" />
                 </f:metadata>
-                
-                <div class="container" >
-                    <h3>#{show.c.name} Agenda:</h3>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <th>Type</th>
-                            <th>Start Time</th>
-                            <th>Day</th>
-                            <th>Hall</th>
-                            <tbody>
-                                <ui:repeat var="i" value="#{show.events}" >
-                                    <tr>
-                                        <h:panelGroup rendered="#{i.ceremony.eid == i.eid}"><td>Ceremony</td></h:panelGroup>
-                                        <h:panelGroup rendered="#{i.session.eid == i.eid}"><td>Session</td></h:panelGroup>
-                                        <h:panelGroup rendered="#{i.workshop.eid == i.eid}"><td>Workshop</td></h:panelGroup>
-                                        <td>#{i.startTime}</td>
-                                        <td>#{i.day}</td>
-                                        <td>#{i.session.hall.name}</td>
-                                    </tr>
-                                </ui:repeat>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <hr></hr>
 
-                <div class="container" >
-                    <h3>My Agenda:</h3>
-                    <div class="table-responsive">
-                        <p:dataTable value="#{show.events}" var="i" class="table table-bordered table-striped">
+                <p:dialog header="Upload files" widgetVar="uploadDialog" resizable="false" modal="true">
+                    <div class="container-fluid">
+                        <h:form>
+                            <p:fileUpload fileUploadListener="#{show.handleUploadFile}" update=":panel_update" label="Upload file(s)" mode="advanced" auto="true" fileLimit="2" 
+                                          dragDropSupport="false" sizeLimit="1000000" allowTypes="/(\.|\/)(pdf|ppt?x)$/" oncomplete="PF('uploadDialog').hide();" />
+                        </h:form>
+                    </div>
+                </p:dialog>
+
+                <p:dialog header="Profile" widgetVar="profileDialog" modal="true" id="profileDialog">
+                    <div >
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-6">
+                                <div class="well well-sm">
+                                    <div class="row">
+                                        <div class="col-sm-6 col-md-4">
+                                            <h:panelGroup rendered="#{show.prof_pic != null}">
+                                                <img src="#{show.prof_pic}" alt="Profile Picture" style="width:300px;height:300px;" class="img-rounded img-responsive" />
+                                            </h:panelGroup>
+                                        </div>
+                                        <div class="col-sm-6 col-md-8">
+                                            <h4>#{show.prof_name}</h4>
+                                            <small>#{show.prof_inst}</small>
+                                            <p>
+                                                <i class="glyphicon glyphicon-envelope"></i>#{show.prof_email} <br/>
+                                                <i class="glyphicon glyphicon-globe"></i><a href="#{show.prof_link}">LinkedIn</a> <br/>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p:dialog>
+
+                <h:panelGroup id="panel_update">
+                    <div class="container-fluid" >
+                        <h3>My Agenda:</h3>
+                        <p:dataTable value="#{show.myAgenda}" var="i" class="table table-bordered table-striped" id="table_1" expandedRow="#{show.shouldExpand(i.eid)}">
                             <p:ajax listener="#{show.onRowToggle}" event="rowToggle" />
                             <p:column style="width: 30px">
                                 <p:rowToggler />
-                                
+
                             </p:column>
 
 
@@ -72,23 +84,198 @@
                                 <h:panelGroup rendered="#{i.session.eid == i.eid}">Session</h:panelGroup>
                                 <h:panelGroup rendered="#{i.workshop.eid == i.eid}">Workshop</h:panelGroup>
                             </p:column>
-                            
+
+                            <p:column headerText="Gallery">
+                                <h:button value="See Pictures" outcome="gallery">
+                                    <f:param name="id" value="#{i.eid}" />
+                                    <f:param name="day" value="#{i.day}" />
+                                    <f:param name="cid" value="#{show.cid}" />
+                                </h:button>
+                            </p:column>
+
                             <p:rowExpansion>
+                                <div class="container-fluid">
+                                    <h:form id="like_form">
+                                        <input type="hidden" name="eid" value="#{i.eid}" />
+                                        <p:commandLink value="Like!" action="#{show.like}" rendered="#{not show.isLiked(i.eid)}" update="like_form" />
+                                        <p:commandLink action="#{show.unlike}" rendered="#{show.isLiked(i.eid)}" value="UnLike!" update="like_form" />
+                                    </h:form>
+                                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://localhost:8080/PIApouksaj8/faces/agenda.xhtml?id=#{show.cid}&amp;amp;eid=#{i.eid}" data-show-count="false">Tweet</a><script async="true" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+                                    <iframe src="https://www.facebook.com/plugins/share_button.php?href=http://localhost:8080/PIApouksaj8/faces/agenda.xhtml?id=#{show.cid}&amp;amp;eid=#{i.eid}&amp;layout=button&amp;size=small&amp;mobile_iframe=true&amp;width=58&amp;height=20&amp;appId" width="58" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+                                </div>
+
                                 <div class="table-responsive">
-                                    <p:dataTable value="#{show.lectures}" var="i" styleClass="table table-bordered table-striped" >
+                                    <p:dataTable value="#{show.lectures}" var="j" styleClass="table table-bordered table-striped" id="expand_table" >
                                         <p:column headerText="Title">
-                                            #{i.title}
+                                            #{j.title}
                                         </p:column>
-                                        
+
                                         <p:column headerText="Author">
-                                            #{i.author1}
+                                            <h:panelGroup rendered="#{not show.isAuthorInSystem(j.author1)}">#{j.author1}</h:panelGroup>
+                                            <h:panelGroup rendered="#{show.isAuthorInSystem(j.author1)}">
+                                                <h:panelGroup rendered="#{not show.isItMe(j.author1)}"><h:form><p:commandLink value="Show profile" actionListener="#{show.updateProfileDialog(j.author1)}" update=":profileDialog" oncomplete="PF('profileDialog').show()" /></h:form></h:panelGroup>
+                                                <h:panelGroup rendered="#{show.isItMe(j.author1)}"><font color="blue">Me</font></h:panelGroup>
+                                            </h:panelGroup>
                                         </p:column>
-                                        
-                                        <p:column>
-                                             <p:commandLink  value="Add to my agenda"/>
+
+                                        <p:column headerText="Author 2">
+                                            <h:panelGroup rendered="#{not show.isAuthorInSystem(j.author2)}">#{j.author2}</h:panelGroup>
+                                            <h:panelGroup rendered="#{show.isAuthorInSystem(j.author2)}">
+                                                <h:panelGroup rendered="#{not show.isItMe(j.author2)}"><h:form><p:commandLink value="Show profile" actionListener="#{show.updateProfileDialog(j.author2)}" update=":profileDialog" oncomplete="PF('profileDialog').show()" /></h:form></h:panelGroup>
+                                                <h:panelGroup rendered="#{show.isItMe(j.author2)}"><font color="blue">Me</font></h:panelGroup>
+                                            </h:panelGroup>
+                                        </p:column>
+
+                                        <p:column headerText="Author 3">
+                                            <h:panelGroup rendered="#{not show.isAuthorInSystem(j.author3)}">#{j.author3}</h:panelGroup>
+                                            <h:panelGroup rendered="#{show.isAuthorInSystem(j.author3)}">
+                                                <h:panelGroup rendered="#{not show.isItMe(j.author3)}"><h:form><p:commandLink value="Show profile" actionListener="#{show.updateProfileDialog(j.author3)}" update=":profileDialog" oncomplete="PF('profileDialog').show()" /></h:form></h:panelGroup>
+                                                <h:panelGroup rendered="#{show.isItMe(j.author3)}"><font color="blue">Me</font></h:panelGroup>
+                                            </h:panelGroup>
+                                        </p:column>
+
+                                        <p:column headerText="Author 4">
+                                            <h:panelGroup rendered="#{not show.isAuthorInSystem(j.author4)}">#{j.author4}</h:panelGroup>
+                                            <h:panelGroup rendered="#{show.isAuthorInSystem(j.author4)}">
+                                                <h:panelGroup rendered="#{not show.isItMe(j.author4)}"><h:form><p:commandLink value="Show profile" actionListener="#{show.updateProfileDialog(j.author4)}" update=":profileDialog" oncomplete="PF('profileDialog').show()" /></h:form></h:panelGroup>
+                                                <h:panelGroup rendered="#{show.isItMe(j.author4)}"><font color="blue">Me</font></h:panelGroup>
+                                            </h:panelGroup>
+                                        </p:column>
+
+                                        <p:column headerText="Rate">
+                                            <h:form id="rating_form">
+                                                <h:panelGroup rendered="#{show.ratings.get(show.lectures.indexOf(j)) eq 0}" id="dalida">
+                                                    <input type="hidden" name="lid" value="#{j.lid}" />
+                                                    <p:rating value="#{show.rating}" cancel="false" >
+                                                        <p:ajax event="rate" listener="#{show.onRate}" update=":table_1"  />
+                                                    </p:rating>
+                                                </h:panelGroup>
+                                                <h:panelGroup rendered="#{show.ratings.get(show.lectures.indexOf(j)) != 0}">
+                                                    <p:rating value="#{show.ratings.get(show.lectures.indexOf(j))}" readonly="true" />
+                                                </h:panelGroup>
+                                            </h:form>
+                                        </p:column>
+
+                                        <p:column headerText="Lecture Slides">
+                                            <h:form>
+                                                <p:commandLink value="Download File" ajax="false" rendered="#{j.file1 != null}">
+                                                    <p:fileDownload value="#{show.getDownloadFile(j.file1)}" />
+                                                </p:commandLink><br/>
+                                                <p:commandLink value="Download File" ajax="false" rendered="#{j.file2 != null}">
+                                                    <p:fileDownload value="#{show.getDownloadFile(j.file2)}" />
+                                                </p:commandLink>
+                                                <h:outputText rendered="#{j.file1 eq null}" value="No files to download!" />
+                                            </h:form>
+                                            <h:panelGroup rendered="#{show.isItMe(j.author1) or show.isItMe(j.author2) or show.isItMe(j.author3) or show.isItMe(j.author4)}">
+                                                <h:form>
+                                                    <input type="hidden" name="lid" value="#{j.lid}" />
+                                                    <p:commandLink value="Upload Files!" oncomplete="PF('uploadDialog').show();" action="#{show.setLidForUpload()}" />
+                                                </h:form>
+                                            </h:panelGroup>
                                         </p:column>
                                     </p:dataTable>
                                 </div>
+
+                                <div class="container-fluid">
+                                    <p:dataTable value="#{show.comments}" var="j" rendered="#{show.comments.size() > 0}" id="comment_table">
+                                        <p:column>
+                                            #{j.user.name}<br/>
+                                            #{j.text}<br/>
+                                            #{j.time}
+                                        </p:column>
+                                    </p:dataTable>
+                                    <br/>
+                                    <h:form>
+                                        <input type="hidden" name="eid" value="#{i.eid}" />
+                                        <p:inputTextarea id="comment_text" value="#{show.comment_text}" required="true" requiredMessage="Field Required!" placeholder="Comment Message" />
+                                        <p:commandButton id="send_comment" value="Send!" action="#{show.addComment}" update=":table_1" >
+                                        </p:commandButton>
+                                    </h:form>
+                                </div>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </div>
+                </h:panelGroup>
+                <hr></hr>
+
+                <div class="container-fluid" >
+                    <h3>#{show.c.name} Agenda:</h3>
+                    <div class="table-responsive">
+                        <p:dataTable value="#{show.events}" var="i" class="table table-bordered table-striped" id="data_table_1">
+                            <p:ajax listener="#{show.onRowToggle}" event="rowToggle" />
+                            <p:column style="width: 30px">
+                                <p:rowToggler />
+
+                            </p:column>
+
+
+                            <p:column headerText="Start Time">
+                                #{i.startTime}
+                            </p:column>
+
+                            <p:column headerText="Day">
+                                #{i.day}
+                            </p:column>
+                            <p:column headerText="Type">
+                                <h:panelGroup rendered="#{i.ceremony.eid == i.eid}">Ceremony</h:panelGroup>
+                                <h:panelGroup rendered="#{i.session.eid == i.eid}">Session</h:panelGroup>
+                                <h:panelGroup rendered="#{i.workshop.eid == i.eid}">Workshop</h:panelGroup>
+                            </p:column>
+
+                            <p:column headerText="Participate">
+                                <h:form rendered="#{not show.myAgenda.contains(i)}">
+                                    <input type="hidden" value="#{i.eid}" name="eid" />
+                                    <p:commandLink update="data_table_1 :panel_update" value="Add to my Agenda!" action="#{show.addToMyAgenda}" />
+                                </h:form>
+
+                                <p:outputLabel rendered="#{show.myAgenda.contains(i)}" ><i>You are a participant!</i></p:outputLabel>
+                            </p:column>
+
+                            <p:rowExpansion>
+                                <h:panelGroup rendered="#{i.session.eid == i.eid}">
+                                    <div class="table-responsive">
+                                        <p:dataTable value="#{show.lectures}" var="j" styleClass="table table-bordered table-striped" >
+                                            <p:column headerText="Title">
+                                                #{j.title}
+                                            </p:column>
+
+                                            <p:column headerText="Author">
+                                                #{j.author1}
+                                            </p:column>
+
+                                            <p:column headerText="Author 2">
+                                                #{j.author2}
+                                            </p:column>
+
+                                            <p:column headerText="Author 3">
+                                                #{j.author3}
+                                            </p:column>
+
+                                            <p:column headerText="Author 4">
+                                                #{j.author4}
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </h:panelGroup>
+
+                                <h:panelGroup rendered="#{i.workshop.eid == i.eid}">
+                                    <div class="container-fluid">
+                                        <table class="table table-bordered table-striped table-responsive">
+                                            <th>Title</th>
+                                            <th>Author</th>
+                                            <th>Author 2</th>
+                                            <th>Author 3</th>
+                                            <th>Author 4</th>
+                                            <tbody>
+                                                <td>#{i.workshop.title}</td>
+                                                <td>#{i.workshop.author1}</td>
+                                                <td>#{i.workshop.author2}</td>
+                                                <td>#{i.workshop.author3}</td>
+                                                <td>#{i.workshop.author4}</td>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </h:panelGroup>
                             </p:rowExpansion>
                         </p:dataTable>
 
